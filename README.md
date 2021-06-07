@@ -1,1 +1,0 @@
-# finanzas-app-front
