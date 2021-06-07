@@ -1,1 +1,1 @@
-# finanzas-app-front
+#Aplicación móvil creada en react native
