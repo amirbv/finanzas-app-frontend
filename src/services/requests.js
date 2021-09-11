@@ -1,15 +1,14 @@
 import axios from 'axios';
 // import { API_URL } from "@env"
 
-const API_URL = 'https://blooming-escarpment-45483.herokuapp.com';
-// const API_URL = 'http://localhost:3307';
+// const API_URL = 'https://blooming-escarpment-45483.herokuapp.com';
+const API_URL = 'http://192.168.100.13:4000'; //recuerda que si es local tiene que ser la IP de la pc
 
 export const loginRequest = async ({
   email,
   password
 }) => {
   try {
-    console.log(API_URL);
     return await axios.post(`${API_URL}/api/auth/signin`, {
       email: email,
       password: password
@@ -35,7 +34,6 @@ export const signupRequest = async ({
   city
 }) => {
   try {
-    console.log(API_URL);
     return await axios.post(`${API_URL}/api/auth/signup`, {
       fullName: name,
       email: email,

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {ScrollView, SafeAreaView, View, FlatList, Button, TextInput, Text, StyleSheet} from 'react-native';
 
-const TodoListScreen = () => {
+const TodoListScreen = ({navigation}) => {
   const [todoListData, setTodoListData] = useState([]);
   const [todoText, setTodoText] = useState('');
 
@@ -46,6 +46,11 @@ const TodoListScreen = () => {
             keyExtractor={(item, index) => item.text + index}
           />
         </View>
+        <Button
+        title="Home"
+        type="clear"
+        onPress={() => navigation.navigate("Home")}
+      />
       </View>
     </SafeAreaView>
   );

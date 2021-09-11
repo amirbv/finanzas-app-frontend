@@ -4,11 +4,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useAuthContext } from '../context/authContext';
 import TodoListScreen from '../views/TodoListScreen';
-// import LoginScreen from '../views/LoginScreen/previousLogin';
 import LoginScreen from '../views/LoginScreen';
 import HomeScreen from '../views/HomeScreen';
 import SplashScreen from '../views/SplashScreen';
 import SignUpScreen from '../views/SignUpScreen';
+import HomeNavigator from './HomeNavigator';
+import TodoNavigator from './TodoNavigator';
 
 
 const Stack = createNativeStackNavigator();
@@ -22,17 +23,9 @@ const Routes = () => {
 
   return (
     <NavigationContainer>
-      {/* <Stack.Navigator
-        initialRouteName="Login"
-        screenOptions={{headerShown: false}}
-      >
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="TodoList" component={TodoListScreen} />
-      </Stack.Navigator> */}
       <Tab.Navigator initialRouteName="Home">
         {
-          user === null ? (
+          user !== null ? (
             <>
               <Tab.Screen
                 name="Login"
@@ -53,11 +46,20 @@ const Routes = () => {
           ) : (
             <>
               <Tab.Screen
-                name="Home" component={HomeScreen}
+                name="OuterHome"
+                component={HomeNavigator}
+                  options={{
+                  title: "Home",
+                  headerShown: false
+                }}
               />
               <Tab.Screen
-                name="TodoList"
-                component={TodoListScreen}
+                name="OuterTodo"
+                component={TodoNavigator}
+                  options={{
+                  title: "Todo List",
+                  headerShown: false
+                }}
               />
             </>
           )
