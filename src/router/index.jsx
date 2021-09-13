@@ -3,16 +3,14 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useAuthContext } from '../context/authContext';
-import TodoListScreen from '../views/TodoListScreen';
 import LoginScreen from '../views/LoginScreen';
-import HomeScreen from '../views/HomeScreen';
 import SplashScreen from '../views/SplashScreen';
 import SignUpScreen from '../views/SignUpScreen';
 import HomeNavigator from './HomeNavigator';
-import TodoNavigator from './TodoNavigator';
+import BudgetNavigator from './BudgetNavigator';
+import ProfileNavigator from './ProfileNavigator'
 
 
-const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Routes = () => {
   const { loadingUser, user } = useAuthContext();
@@ -23,9 +21,9 @@ const Routes = () => {
 
   return (
     <NavigationContainer>
-      <Tab.Navigator initialRouteName="Home">
+      <Tab.Navigator initialRouteName="OuterHome">
         {
-          user !== null ? (
+          user === null ? (
             <>
               <Tab.Screen
                 name="Login"
@@ -39,12 +37,22 @@ const Routes = () => {
                 component={SignUpScreen}
                 options={{
                   title: 'Sign Up',
-                  headerShown: false
+                  headerShown: false,
+                  
                 }}
               />
             </>
           ) : (
             <>
+              
+              <Tab.Screen
+                name="OuterBudget"
+                component={BudgetNavigator}
+                  options={{
+                  title: "Budgets",
+                  headerShown: false
+                }}
+              />
               <Tab.Screen
                 name="OuterHome"
                 component={HomeNavigator}
@@ -54,10 +62,10 @@ const Routes = () => {
                 }}
               />
               <Tab.Screen
-                name="OuterTodo"
-                component={TodoNavigator}
+                name="OuterProfile"
+                component={ProfileNavigator}
                   options={{
-                  title: "Todo List",
+                  title: "Profile",
                   headerShown: false
                 }}
               />

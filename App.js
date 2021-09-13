@@ -2,7 +2,7 @@ import React from 'react';
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ThemeProvider } from "react-native-elements";
 import { AuthProvider } from "./src/context/authContext";
-import Routes from './src/routes';
+import Routes from './src/router';
 
 const App = () => {
   return (
