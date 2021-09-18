@@ -62,3 +62,62 @@ export const getStates = async () => {
     throw error;
   }
 };
+
+
+export const getUserData = async (userId, userToken) => {
+  try {
+    console.log(userToken)
+    return await axios.get(`${API_URL}/api/users/${userId}`, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+    
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const updateUser = async ({
+  name,
+  state,
+  city
+}, userId, userToken) => {
+  try {
+    return await axios.put(`${API_URL}/api/users/update/${userId}`, {
+      fullName: name,
+      stateIDStates: state,
+      city: city
+    }, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error
+    });
+  } catch (error) {
+    throw error
+  }
+};
+
+export const updatePassword = async ({
+  oldPassword,
+  newPassword
+}, userId, userToken) => {
+  try {
+    return await axios.put(`${API_URL}/api/users/update/${userId}`, {
+      oldPassword,
+      newPassword
+    }, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error
+    });
+  } catch (error) {
+    throw error
+  }
+};

@@ -60,9 +60,9 @@ export function AuthProvider(props) {
     try {
       const { data } = await loginRequest({ email, password });
       
-      await setToken({user: data});
+      await setToken(data);
       
-      setUser({user: data});
+      setUser(data);
       return true;
     } catch (error) {
       throw error;
@@ -85,9 +85,9 @@ export function AuthProvider(props) {
         city
       });
       
-      await setToken({user: data});
+      await setToken(data);
       
-      setUser({user: data});
+      setUser(data);
       return true;
     } catch (error) {
       throw error;

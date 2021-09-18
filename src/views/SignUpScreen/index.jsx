@@ -41,10 +41,6 @@ const SignUpScreen = ({ navigation }) => {
       setLoadingStates(true);
       try {
         const { data } = await getStates();
-        // console.log(data);
-        const filteredStates = data.map((state) => {
-          return { label: state.name, value: state.IDStates };
-        });
         setStates(data);
         setLoadingStates(false);
       } catch (error) {
@@ -226,8 +222,3 @@ const SignUpScreen = ({ navigation }) => {
 
 export default SignUpScreen;
 
-const inputStyles = StyleSheet.create({
-  input: {
-    width: "100%",
-  },
-});
