@@ -33,8 +33,8 @@ export default function PasswordForm() {
   const handleUpdatePress = async data => {
     try {
       console.log(data)
-      // const response = await updatePassword(data, user.id, user.accessToken);
-      // console.log(response);
+      const response = await updatePassword(data, user.id, user.accessToken);
+      console.log(response);
       showMessage({
         message: "Contraseña actualizada",
         description: "Tu contraseña fue actualizada correctamente",

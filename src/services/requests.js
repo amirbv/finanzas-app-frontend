@@ -104,12 +104,14 @@ export const updateUser = async ({
 
 export const updatePassword = async ({
   oldPassword,
-  newPassword
+  newPassword,
+  confirmPassword
 }, userId, userToken) => {
   try {
-    return await axios.put(`${API_URL}/api/users/update/${userId}`, {
-      oldPassword,
-      newPassword
+    return await axios.put(`${API_URL}/api/users/updatePass/${userId}`, {
+      password: oldPassword,
+      newPassword,
+      confirmPassword
     }, {
       headers: {
         "x-access-token": userToken

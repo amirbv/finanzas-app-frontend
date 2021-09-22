@@ -46,7 +46,11 @@ const ProfileScreen = ({ navigation }) => {
             overlayContainerStyle={{backgroundColor: colors.primary, marginVertical: 5}}
           />
         </View>
-        {loadingUser ? <Text>Cargando datos</Text> : null}
+        {loadingUser ? (
+          <View style={styles.sectionCenter}>
+            <Text h4 style={{textAlign: 'center'}}>Cargando datos</Text>
+          </View>
+        ) : null}
         {userData ? (
           <>
             <View>
@@ -58,11 +62,11 @@ const ProfileScreen = ({ navigation }) => {
             <PasswordForm />
           </>
         )
-          : (
-            <View>
-              <Text>Error cargando los datos</Text>
+          : !loadingUser ? (
+            <View style={styles.sectionCenter}>
+              <Text h4 style={{textAlign: 'center'}}>Los datos no fueron cargados</Text>
             </View>
-          )}
+          ): null}
       </View>
     </ScrollView>
   )
@@ -73,6 +77,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     marginHorizontal: 18
+  },
+  sectionCenter: {
+    justifyContent: 'center',
+    flex: 1,
+    
   },
   imageContainer: {
     marginVertical: 10,

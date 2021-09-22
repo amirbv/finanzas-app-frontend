@@ -41,10 +41,11 @@ const ProfileForm = ({ userData }) => {
         setLoadingStates(false);
       } catch (error) {
         console.log({error});
-        Alert.alert(
-          'Error',
-          'Los estados no fueron cargados correctamente por favor intente nuevamente',
-        );
+        showMessage({
+          message: "Error",
+          description: 'Los estados no fueron cargados correctamente por favor intente nuevamente',
+          type: "error",
+        });
         setLoadingStates(false);
       }
     };
@@ -64,14 +65,11 @@ const ProfileForm = ({ userData }) => {
         type: "success",
       });
     } catch (error) {
-      console.log({ error });
-      console.log(error.response);
       showMessage({
         message: "Error",
         description: "Tu perfil no pudo ser actualizado intenta nuevamente",
         type: "error",
       });
-      // Alert.alert('Error', 'Hubo un error revise e intente nuevamente');
     }
   };
 
