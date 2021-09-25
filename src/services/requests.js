@@ -4,6 +4,7 @@ import axios from 'axios';
 // const API_URL = 'https://blooming-escarpment-45483.herokuapp.com';
 const API_URL = 'http://192.168.100.13:4000'; //recuerda que si es local tiene que ser la IP de la pc
 
+/* Login y Signup */
 export const loginRequest = async ({
   email,
   password
@@ -12,13 +13,11 @@ export const loginRequest = async ({
     return await axios.post(`${API_URL}/api/auth/signin`, {
       email: email,
       password: password
-    }, 
-    {
+    }, {
       headers: {
         'Content-Type': 'application/json'
       }
-    }
-    ).catch(error => {
+    }).catch(error => {
       throw error
     });
   } catch (error) {
@@ -40,7 +39,7 @@ export const signupRequest = async ({
       password: password,
       stateIDStates: state,
       city: city
-    },{
+    }, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -57,16 +56,15 @@ export const getStates = async () => {
     return await axios.get(`${API_URL}/api/states`).catch(error => {
       throw error;
     });
-    
+
   } catch (error) {
     throw error;
   }
 };
 
-
+/* USER PROFILE */
 export const getUserData = async (userId, userToken) => {
   try {
-    console.log(userToken)
     return await axios.get(`${API_URL}/api/users/${userId}`, {
       headers: {
         "x-access-token": userToken
@@ -74,7 +72,7 @@ export const getUserData = async (userId, userToken) => {
     }).catch(error => {
       throw error;
     });
-    
+
   } catch (error) {
     throw error;
   }
@@ -95,10 +93,10 @@ export const updateUser = async ({
         "x-access-token": userToken
       }
     }).catch(error => {
-      throw error
+      throw error;
     });
   } catch (error) {
-    throw error
+    throw error;
   }
 };
 
@@ -120,6 +118,47 @@ export const updatePassword = async ({
       throw error
     });
   } catch (error) {
-    throw error
+    throw error;
   }
 };
+
+/* WALLETS */
+
+export const getUserWallets = async (userId, userToken) => {
+  try {
+    return await axios.get(`${API_URL}/api/walletsByUser/${userId}`, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const createUserWallet = async (userToken, userId, {
+  walletName,
+  description,
+  amount,
+  bank
+}) => {
+  try {
+    return await axios.post(`${API_URL}/api/walletsByUser/`, {
+      name: walletName,
+      description,
+      amount,
+      bankIDBank: bank,
+      userIDUsers: userId
+    }, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}

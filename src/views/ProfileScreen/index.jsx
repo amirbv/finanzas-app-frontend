@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Alert, StyleSheet, ScrollView } from 'react-native';
-import { Text, Avatar } from 'react-native-elements';
+import { Text, Avatar, Button } from 'react-native-elements';
+import { showMessage, hideMessage } from "react-native-flash-message";
 import PasswordForm from '../../components/PasswordForm';
 import ProfileForm from '../../components/ProfileForm';
 import { useAuthContext } from '../../context/authContext';
@@ -8,32 +9,36 @@ import { getUserData } from '../../services/requests';
 import { colors } from '../../styles/base';
 
 const ProfileScreen = ({ navigation }) => {
-  const { user } = useAuthContext();
+  const { user, logoutUser } = useAuthContext();
   const [loadingUser, setLoadingUser] = useState(false);
   const [userData, setUserData] = useState(null);
 
-  useEffect(() => {
-    const loadUser = async () => {
-      setLoadingUser(true);
-      try {
-        console.log(user);
-        const { data } = await getUserData(user.id, user.accessToken);
-        console.log(data);
-        
-        setUserData(data);
-        setLoadingUser(false);
-      } catch (error) {
-        console.log(error.response);
-        Alert.alert(
-          'Error',
-          'La información no pudo ser cargada intente nuevamente'
-        );
-        setLoadingUser(false);
-      }
-    };
+  const loadUser = useCallback(async () => {
+    setLoadingUser(true);
+    try {
+      const { data } = await getUserData(user.id, user.accessToken);
+      console.log(data);
+      
+      setUserData(data);
+      setLoadingUser(false);
+    } catch (error) {
+      console.log(error.response);
+      showMessage({
+        message: "Error",
+        description: 'La información no pudo ser cargada intente nuevamente',
+        type: "error",
+      });
+      setLoadingUser(false);
+    }
+  },[user]);
 
+  useEffect(() => {
     loadUser();
-  }, []);
+  }, [loadUser]);
+
+  const updateUser = () => {
+    loadUser();
+  }
 
   return (
     <ScrollView>
@@ -58,15 +63,23 @@ const ProfileScreen = ({ navigation }) => {
               <Text h4>Estado: {userData.State.name}</Text>
               <Text h4>Ciudad: {userData.city}</Text>
             </View>
-            <ProfileForm userData={userData} />
+            <ProfileForm userData={userData} onUpdate={updateUser} />
             <PasswordForm />
+            <Button
+              title="Logout!"
+              type="clear"
+              titleStyle={{ color: colors.warning }}
+              containerStyle={{ marginVertical: 10 }}
+              onPress={() => logoutUser()}
+            />
           </>
         )
           : !loadingUser ? (
             <View style={styles.sectionCenter}>
               <Text h4 style={{textAlign: 'center'}}>Los datos no fueron cargados</Text>
             </View>
-          ): null}
+          ) : null}
+        
       </View>
     </ScrollView>
   )
@@ -81,7 +94,6 @@ const styles = StyleSheet.create({
   sectionCenter: {
     justifyContent: 'center',
     flex: 1,
-    
   },
   imageContainer: {
     marginVertical: 10,
@@ -91,15 +103,6 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     alignSelf: 'center',
-  },
-  inputContainer: {
-  },
-  textInput: {
-    backgroundColor: '#FFF',
-    padding: 6,
-    color: '#212121',
-    fontSize: 20,
-    marginVertical: 12,
   },
   button: {
     backgroundColor: '#1976b2',

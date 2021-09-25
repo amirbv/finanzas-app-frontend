@@ -12,7 +12,7 @@ const ProfileNavigator = () => {
       <Stack.Screen
         name="InnerProfile"
         component={ProfileScreen}
-        options={{ title: user.email, tabBarLabel: 'Profile' }}
+        options={{ title:`Perfil de: ${user.email}`, tabBarLabel: 'Profile' }}
       />
     </Stack.Navigator>
   );

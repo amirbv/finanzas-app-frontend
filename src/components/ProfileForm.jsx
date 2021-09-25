@@ -18,7 +18,7 @@ const schema = yup.object().shape({
   city: yup.string().required('La ciudad es necesaria'),
 });
 
-const ProfileForm = ({ userData }) => {
+const ProfileForm = ({ userData, onUpdate }) => {
   const { user } = useAuthContext();
   const [loadingStates, setLoadingStates] = useState(false);
   const [states, setStates] = useState([]);
@@ -64,6 +64,8 @@ const ProfileForm = ({ userData }) => {
         description: "Tu perfil fue actualizado correctamente",
         type: "success",
       });
+      onUpdate();
+      toggleEditting();
     } catch (error) {
       showMessage({
         message: "Error",
