@@ -63,9 +63,9 @@ export const getStates = async () => {
 };
 
 /* USER PROFILE */
-export const getUserData = async (userId, userToken) => {
+export const getUserData = async (userToken) => {
   try {
-    return await axios.get(`${API_URL}/api/users/${userId}`, {
+    return await axios.get(`${API_URL}/api/users`, {
       headers: {
         "x-access-token": userToken
       }
@@ -82,9 +82,9 @@ export const updateUser = async ({
   name,
   state,
   city
-}, userId, userToken) => {
+}, userToken) => {
   try {
-    return await axios.put(`${API_URL}/api/users/update/${userId}`, {
+    return await axios.put(`${API_URL}/api/users/update`, {
       fullName: name,
       stateIDStates: state,
       city: city
@@ -104,9 +104,9 @@ export const updatePassword = async ({
   oldPassword,
   newPassword,
   confirmPassword
-}, userId, userToken) => {
+}, userToken) => {
   try {
-    return await axios.put(`${API_URL}/api/users/updatePass/${userId}`, {
+    return await axios.put(`${API_URL}/api/users/updatePass`, {
       password: oldPassword,
       newPassword,
       confirmPassword
@@ -124,9 +124,9 @@ export const updatePassword = async ({
 
 /* WALLETS */
 
-export const getUserWallets = async (userId, userToken) => {
+export const getUserWallets = async (userToken) => {
   try {
-    return await axios.get(`${API_URL}/api/walletsByUser/${userId}`, {
+    return await axios.get(`${API_URL}/api/walletsByUser`, {
       headers: {
         "x-access-token": userToken
       }
@@ -138,20 +138,63 @@ export const getUserWallets = async (userId, userToken) => {
   }
 }
 
-export const createUserWallet = async (userToken, userId, {
-  walletName,
+export const getWalletInfo = async (userToken, walletId) => {
+  try {
+    return await axios.get(`${API_URL}/api/wallets/${walletId}`, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const getWalletDependencies = async (userToken) => {
+  try {
+    return await axios.get(`${API_URL}/api/walletsDependencies`, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const createUserWallet = async ({
+  name,
   description,
   amount,
-  bank
-}) => {
+  bank,
+  currency
+}, userToken) => {
   try {
-    return await axios.post(`${API_URL}/api/walletsByUser/`, {
-      name: walletName,
+    return await axios.post(`${API_URL}/api/wallets`, {
+      name,
       description,
-      amount,
+      amount: parseFloat(amount),
       bankIDBank: bank,
-      userIDUsers: userId
+      currencyTypeIDCurrencyType: currency
     }, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const deleteWallet = async (walletId, userToken) => {
+  try {
+    return await axios.delete(`${API_URL}/api/wallets/${walletId}`, {
       headers: {
         "x-access-token": userToken
       }

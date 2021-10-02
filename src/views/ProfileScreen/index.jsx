@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native';
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Alert, StyleSheet, ScrollView } from 'react-native';
 import { Text, Avatar, Button } from 'react-native-elements';
@@ -12,11 +13,12 @@ const ProfileScreen = ({ navigation }) => {
   const { user, logoutUser } = useAuthContext();
   const [loadingUser, setLoadingUser] = useState(false);
   const [userData, setUserData] = useState(null);
+  const isFocused = useIsFocused();
 
   const loadUser = useCallback(async () => {
     setLoadingUser(true);
     try {
-      const { data } = await getUserData(user.id, user.accessToken);
+      const { data } = await getUserData(user.accessToken);
       console.log(data);
       
       setUserData(data);
@@ -33,8 +35,8 @@ const ProfileScreen = ({ navigation }) => {
   },[user]);
 
   useEffect(() => {
-    loadUser();
-  }, [loadUser]);
+    if(isFocused && !userData) loadUser();
+  }, [loadUser, isFocused, userData]);
 
   const updateUser = () => {
     loadUser();
@@ -76,7 +78,14 @@ const ProfileScreen = ({ navigation }) => {
         )
           : !loadingUser ? (
             <View style={styles.sectionCenter}>
-              <Text h4 style={{textAlign: 'center'}}>Los datos no fueron cargados</Text>
+              <Text h4 style={{ textAlign: 'center' }}>Los datos no fueron cargados</Text>
+              <Button
+                title="Logout!"
+                type="clear"
+                titleStyle={{ color: colors.warning }}
+                containerStyle={{ marginVertical: 10 }}
+                onPress={() => logoutUser()}
+              />
             </View>
           ) : null}
         

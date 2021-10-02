@@ -1,3 +1,4 @@
+import { useFocusEffect, useIsFocused  } from "@react-navigation/native";
 import React, {useState, useCallback, useEffect} from "react";
 import { View, SafeAreaView, StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import { Card, Text, FAB } from "react-native-elements";
@@ -11,12 +12,13 @@ const HomeScreen = ({ navigation }) => {
   const [loadingWallets, setLoadingWallets] = useState(false);
   const [visible, setVisible] = useState(true);
   const [wallets, setWallets] = useState([]);
+  const isFocused = useIsFocused();
 
   const loadWallets = useCallback(async () => {
     setLoadingWallets(true);
     try {
       console.log(user.accessToken);
-      const { data } = await getUserWallets(user.id, user.accessToken);
+      const { data } = await getUserWallets(user.accessToken);
       console.log(data);
       
       setWallets(data);
@@ -30,11 +32,11 @@ const HomeScreen = ({ navigation }) => {
       });
       setLoadingWallets(false);
     }
-  },[user]);
+  }, [user.accessToken]);
 
   useEffect(() => {
-    loadWallets();
-  }, [loadWallets]);
+    if (isFocused) loadWallets();
+  }, [isFocused, loadWallets]);
 
   const RenderItem = ({ item }) => (
     <TouchableOpacity

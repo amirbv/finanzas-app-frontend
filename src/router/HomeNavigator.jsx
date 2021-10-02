@@ -12,7 +12,7 @@ const HomeNavigator = () => {
       <Stack.Screen
         name="InnerHome"
         component={HomeScreen}
-        options={{ title: "Monederos", tabBarLabel: 'Home' }}
+        options={{ title: "Monederos", tabBarLabel: 'Home', unmountOnBlur: true }}
       />
       <Stack.Screen
         name="CreateWallet"
@@ -22,7 +22,7 @@ const HomeNavigator = () => {
       <Stack.Screen
         name="Wallet"
         component={WalletScreen}
-        options={{ title: "Detalles del monedero" }}
+        options={{ title: "Detalles de: cargando..." }}
       />
     </Stack.Navigator>
   );

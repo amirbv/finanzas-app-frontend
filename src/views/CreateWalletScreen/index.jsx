@@ -1,24 +1,27 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { Text } from 'react-native-elements';
+import CreateWalletForm from '../../components/CreateWalletForm';
 
 const CreateWalletScreen = ({ navigation }) => {
   return (
-    <View style={styles.container}>
-      <Text h1 style={styles.centerText}>Crear monedero</Text>
-    </View>
+    <ScrollView>
+      <View style={styles.container}>
+        <Text h3>Crear monedero</Text>
+        <CreateWalletForm />
+      </View>
+    </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    zIndex: 0
-  },
-  centerText: {
-    textAlign: 'center'
+    justifyContent: 'flex-start',
+    marginHorizontal: 18,
+    marginTop: 10
   }
-})
+});
 
 export default CreateWalletScreen;
 
