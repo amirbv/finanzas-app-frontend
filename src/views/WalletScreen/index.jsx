@@ -1,7 +1,8 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, ScrollView, StyleSheet} from 'react-native';
 import { Text, Avatar, Button } from 'react-native-elements';
 import {showMessage} from 'react-native-flash-message';
+import UpdateWalletForm from '../../components/UpdateWalletForm';
 import {useAuthContext} from '../../context/authContext';
 import { getWalletInfo, deleteWallet } from '../../services/requests';
 import { colors } from '../../styles/base';
@@ -56,48 +57,59 @@ const WalletScreen = ({route, navigation}) => {
   }
 
   return (
-    <View style={styles.container}>
-      {loading ? (
-        <View style={styles.sectionCenter}>
-          <Text h4 style={{textAlign: 'center'}}>
-            Cargando datos
-          </Text>
-        </View>
-      ) : null}
-      {walletInfo ? (
-        <>
-          <View>
-            <View style={styles.imageContainer}>
-              <Avatar
-                rounded
-                size="xlarge"
-                icon={{name: 'wallet', type: 'fontisto'}}
-                overlayContainerStyle={{
-                  backgroundColor: colors.primary,
-                  marginVertical: 5,
-                }}
+    <ScrollView>
+      <View style={styles.container}>
+        {loading ? (
+          <View style={styles.sectionCenter}>
+            <Text h4 style={{textAlign: 'center'}}>
+              Cargando datos
+            </Text>
+          </View>
+        ) : null}
+        {walletInfo ? (
+          <>
+            <View>
+              <View style={styles.imageContainer}>
+                <Avatar
+                  rounded
+                  size="xlarge"
+                  icon={{name: 'wallet', type: 'fontisto'}}
+                  overlayContainerStyle={{
+                    backgroundColor: colors.primary,
+                    marginVertical: 5,
+                  }}
+                />
+              </View>
+              <Text h1>{walletInfo.name}</Text>
+              <Text h4>Saldo: {walletInfo.amount} {walletInfo.CurrencyType.symbol}</Text>
+              <Text>Banco: {walletInfo.Banks.name}</Text>
+              <Text>{walletInfo.description}</Text>
+              <Button
+                title="Ver movimientos"
+                type="clear"
+                titleStyle={{ color: colors.primary }}
+                containerStyle={{ marginVertical: 10 }}
+                onPress={() => navigation.navigate("WalletMovements", { walletInfo })}
+              />
+              <UpdateWalletForm walletInfo={walletInfo} />
+              <Button
+                title="Eliminar"
+                type="clear"
+                titleStyle={{ color: colors.warning }}
+                containerStyle={{ marginVertical: 10 }}
+                onPress={handleDeletePress}
               />
             </View>
-            <Text h1>{walletInfo.name}</Text>
-            <Text h4>Saldo: {walletInfo.amount} {walletInfo.CurrencyType.symbol}</Text>
-            <Text>{walletInfo.description}</Text>
-            <Button
-              title="Eliminar"
-              type="clear"
-              titleStyle={{ color: colors.warning }}
-              containerStyle={{ marginVertical: 10 }}
-              onPress={handleDeletePress}
-            />
+          </>
+        ) : !loading ? (
+          <View style={styles.sectionCenter}>
+            <Text h4 style={{textAlign: 'center'}}>
+              Los datos no fueron cargados
+            </Text>
           </View>
-        </>
-      ) : !loading ? (
-        <View style={styles.sectionCenter}>
-          <Text h4 style={{textAlign: 'center'}}>
-            Los datos no fueron cargados
-          </Text>
-        </View>
-      ) : null}
-    </View>
+        ) : null}
+      </View>
+    </ScrollView>
   );
 };
 

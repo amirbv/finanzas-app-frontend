@@ -10,6 +10,7 @@ import SignUpScreen from '../views/SignUpScreen';
 import HomeNavigator from './HomeNavigator';
 import BudgetNavigator from './BudgetNavigator';
 import ProfileNavigator from './ProfileNavigator';
+import { colors } from '../styles/base';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +30,7 @@ const Routes = () => {
             name="Login"
             component={LoginScreen}
             options={{
+              title: 'Iniciar Sesión',
               headerShown: false,
             }}
           />
@@ -36,19 +38,26 @@ const Routes = () => {
             name="Signup"
             component={SignUpScreen}
             options={{
-              title: 'Sign Up',
+              title: 'Crear cuenta',
               headerShown: false,
             }}
           />
         </Stack.Navigator>
       ) : (
-        <Tab.Navigator initialRouteName="Home">
+        <Tab.Navigator
+          initialRouteName="Home"
+          screenOptions={{
+            tabBarActiveBackgroundColor: colors.primary,
+            tabBarActiveTintColor: "white",
+            tabBarInactiveTintColor: colors.primary,
+            headerShown: false
+          }}
+        >
           <Tab.Screen
             name="Budget"
             component={BudgetNavigator}
             options={{
-              title: 'Budgets',
-              headerShown: false,
+              title: 'Presupuestos',
               tabBarIcon: ({color, size}) => (
                 <MaterialCommunityIcons name="book-open" color={color} size={size} />
               ),
@@ -58,8 +67,7 @@ const Routes = () => {
             name="Home"
             component={HomeNavigator}
             options={{
-              title: 'Home',
-              headerShown: false,
+              title: 'Inicio',
               tabBarIcon: ({color, size}) => (
                 <MaterialCommunityIcons name="home" color={color} size={size} />
               ),
@@ -69,8 +77,7 @@ const Routes = () => {
             name="Profile"
             component={ProfileNavigator}
             options={{
-              title: 'Profile',
-              headerShown: false,
+              title: 'Perfil',
               tabBarIcon: ({color, size}) => (
                 <MaterialCommunityIcons
                   name="account"

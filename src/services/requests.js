@@ -205,3 +205,19 @@ export const deleteWallet = async (walletId, userToken) => {
     throw error;
   }
 }
+
+/* MOVEMENTS */
+
+export const getMovements = async (userToken, walletId) => {
+  try {
+    return await axios.get(`${API_URL}/api/movementsByWallet/${walletId}`, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}

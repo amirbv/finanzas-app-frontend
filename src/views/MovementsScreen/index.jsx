@@ -1,26 +1,26 @@
-import { useFocusEffect, useIsFocused  } from "@react-navigation/native";
-import React, {useState, useCallback, useEffect} from "react";
+import React, { useEffect, useCallback, useState } from 'react'
 import { View, SafeAreaView, StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import { Card, Text, FAB } from "react-native-elements";
 import { showMessage } from "react-native-flash-message";
 import { useAuthContext } from '../../context/authContext';
-import { getUserWallets } from "../../services/requests";
+import { getMovements } from '../../services/requests';
 import { colors } from "../../styles/base";
 
-const HomeScreen = ({ navigation }) => {
+const MovementsScreen = ({ route, navigation }) => {
   const { user } = useAuthContext();
-  const [loadingWallets, setLoadingWallets] = useState(false);
-  const [wallets, setWallets] = useState([]);
-  const isFocused = useIsFocused();
+  const { walletInfo } = route.params;
+  const [loading, setLoading] = useState(false);
+  const [movements, setMovements] = useState([]);
 
-  const loadWallets = useCallback(async () => {
-    setLoadingWallets(true);
+  const loadMovements = useCallback(async () => {
+    setLoading(true);
     try {
-      const { data } = await getUserWallets(user.accessToken);
-      // console.log(data);
+      console.log(user.accessToken);
+      const { data } = await getMovements(user.accessToken, walletInfo.IDWallets);
+      console.log(data);
       
-      setWallets(data);
-      setLoadingWallets(false);
+      setMovements(data);
+      setLoading(false);
     } catch (error) {
       console.log(error.response);
       showMessage({
@@ -28,45 +28,50 @@ const HomeScreen = ({ navigation }) => {
         description: 'La información no pudo ser cargada intente nuevamente',
         type: "error",
       });
-      setLoadingWallets(false);
+      setLoading(false);
     }
-  }, [user.accessToken]);
+  }, [user.accessToken, walletInfo.IDWallets]);
 
   useEffect(() => {
-    if (isFocused) loadWallets();
-  }, [isFocused, loadWallets]);
+    navigation.setOptions({ title: `Movimientos de: ${walletInfo.name}` });
+  }, []);
+
+  useEffect(() => {
+    loadMovements();
+  }, [loadMovements]);
 
   const RenderItem = ({ item }) => (
     <TouchableOpacity
       activeOpacity={0.8}
-      onPress={() => navigation.navigate('Wallet', { walletId: item.IDWallets })}
+      // onPress={() => navigation.navigate('Wallet', { walletId: item.IDWallets })}
     >
       <Card>
-        <Card.Title h4>{item.name}</Card.Title>
+        <Card.Title h4>{item.title}</Card.Title>
         <Text>{item.description}</Text>
+        <Text>Monto: {item.amount} {walletInfo.CurrencyType.symbol}</Text>
       </Card>
     </TouchableOpacity>
   );
-
+  
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={styles.container}>
         {
-          loadingWallets && wallets.length === 0 ? (
+          loading && movements.length === 0 ? (
             <View styles={styles.centerContainer}>
-              <Text h4 style={styles.centerText}>Cargando monederos</Text>
+              <Text h4 style={styles.centerText}>Cargando movimientos</Text>
             </View>
           )
-            : !loadingWallets && wallets.length === 0 ? (
+            : !loading && movements.length === 0 ? (
               <View styles={styles.centerContainer}>
-                <Text h4 style={styles.centerText}>No tiene monederos</Text>
+                <Text h4 style={styles.centerText}>No tiene movimientos</Text>
               </View>
             ) : null
         }
         <FlatList
-          data={wallets}
+          data={movements}
           renderItem={RenderItem}
-          keyExtractor={item => item.IDWallets}
+          keyExtractor={item => item.IDMovements}
         />
       </View>
       <FAB
@@ -75,11 +80,11 @@ const HomeScreen = ({ navigation }) => {
         icon={{ name: 'add', color: 'white' }}
         color={colors.primary}
         size="large"
-        onPress={() => navigation.navigate('CreateWallet')}
+        onPress={() => navigation.navigate('CreateMovement', { walletInfo })}
       />
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -97,4 +102,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default HomeScreen;
+export default MovementsScreen;
