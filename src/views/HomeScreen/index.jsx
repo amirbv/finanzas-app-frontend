@@ -1,5 +1,5 @@
-import { useFocusEffect, useIsFocused  } from "@react-navigation/native";
 import React, {useState, useCallback, useEffect} from "react";
+import { useIsFocused  } from "@react-navigation/native";
 import { View, SafeAreaView, StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import { Card, Text, FAB } from "react-native-elements";
 import { showMessage } from "react-native-flash-message";

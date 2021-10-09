@@ -8,7 +8,7 @@ import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import RNPickerSelect from 'react-native-picker-select';
 import {showMessage} from 'react-native-flash-message';
-import {createUserWallet, getWalletDependencies} from '../services/requests';
+import {createUserWallet, getWalletDependencies, updateWallet} from '../services/requests';
 
 import {useAuthContext} from '../context/authContext';
 import {padding, colors} from '../styles/base';
@@ -24,7 +24,7 @@ const schema = yup.object().shape({
     .required('El saldo inicial es requerido'),
 });
 
-const UpdateWalletForm = ({ walletInfo }) => {
+const UpdateWalletForm = ({ walletInfo, onUpdate }) => {
   const { user } = useAuthContext();
   const navigation = useNavigation();
   const [editting, setEditting] = useState(false);
@@ -32,7 +32,6 @@ const UpdateWalletForm = ({ walletInfo }) => {
     handleSubmit,
     control,
     formState: {errors},
-    reset,
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -70,19 +69,20 @@ const UpdateWalletForm = ({ walletInfo }) => {
     try {
       console.log(data);
 
-      // const response = await createUserWallet(data, user.accessToken);
-      // console.log(response);
-      // showMessage({
-      //   message: "Monedero creado",
-      //   description: "Tu monedero se creó correctamente",
-      //   type: "success",
-      // });
-      // reset();
+      const response = await updateWallet(data, walletInfo.IDWallets, user.accessToken);
+      console.log(response);
+      showMessage({
+        message: "Monedero actualizado",
+        description: "Tu monedero se actualizó correctamente",
+        type: "success",
+      });
+      onUpdate();
+      toggleEditting();
     } catch (error) {
       console.log(error.response);
       showMessage({
         message: 'Error',
-        description: 'Tu monedero no pudo ser creado, intenta nuevamente',
+        description: 'Tu monedero no pudo ser actualizado, intenta nuevamente',
         type: 'error',
       });
     }
@@ -118,7 +118,7 @@ const UpdateWalletForm = ({ walletInfo }) => {
           control={control}
           render={({field: {onChange, onBlur, value}}) => (
             <Input
-              placeholder="Descripción"
+              placeholder="Descripción (opcional)"
               style={styles.input}
               multiline={true}
               numberOfLines={2}

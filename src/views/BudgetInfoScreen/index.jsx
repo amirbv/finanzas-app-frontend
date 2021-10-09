@@ -7,7 +7,8 @@ import {useAuthContext} from '../../context/authContext';
 import { getWalletInfo, deleteWallet } from '../../services/requests';
 import { colors } from '../../styles/base';
 
-const WalletScreen = ({route, navigation}) => {
+const BudgetInfoScreen = ({ route, navigation }) => {
+  //this components needs change and adaptation for budgets
   const {walletId} = route.params;
   const {user} = useAuthContext();
   const [loading, setLoading] = useState(false);
@@ -56,10 +57,6 @@ const WalletScreen = ({route, navigation}) => {
     }
   }
 
-  const updateWalletInfo = () => {
-    loadWalletInfo();
-  }
-
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -95,7 +92,7 @@ const WalletScreen = ({route, navigation}) => {
                 containerStyle={{ marginVertical: 10 }}
                 onPress={() => navigation.navigate("WalletMovements", { walletInfo })}
               />
-              <UpdateWalletForm walletInfo={walletInfo} onUpdate={updateWalletInfo} />
+              <UpdateWalletForm walletInfo={walletInfo} />
               <Button
                 title="Eliminar"
                 type="clear"
@@ -143,4 +140,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WalletScreen;
+export default BudgetInfoScreen;

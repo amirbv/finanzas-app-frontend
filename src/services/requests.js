@@ -192,6 +192,32 @@ export const createUserWallet = async ({
   }
 }
 
+export const updateWallet = async ({
+  name,
+  description,
+  amount,
+  bank,
+  currency
+}, walletId, userToken) => {
+  try {
+    return await axios.put(`${API_URL}/api/wallets/${walletId}`, {
+      name,
+      description,
+      amount: parseFloat(amount),
+      bankIDBank: bank,
+      currencyTypeIDCurrencyType: currency
+    }, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
 export const deleteWallet = async (walletId, userToken) => {
   try {
     return await axios.delete(`${API_URL}/api/wallets/${walletId}`, {
@@ -211,6 +237,95 @@ export const deleteWallet = async (walletId, userToken) => {
 export const getMovements = async (userToken, walletId) => {
   try {
     return await axios.get(`${API_URL}/api/movementsByWallet/${walletId}`, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const getSingleMovement = async (movementId, userToken) => {
+  try {
+    return await axios.get(`${API_URL}/api/movements/${movementId}`, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const getMovementsDependencies = async (userToken) => {
+  try {
+    return await axios.get(`${API_URL}/api/movementsDependencies`, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const createMovement = async ({
+  title,
+  description,
+  option,
+  movementType,
+  amount,
+  conversionRate,
+  conversionByUser
+}, userToken, walletId) => {
+  try {
+    return await axios.post(`${API_URL}/api/movement/${walletId}`, {
+      optionIDOptions: option,
+      title,
+      description,
+      movementTypeIDMovementType: movementType,
+      amount,
+      conversionRateIDConversionRate: conversionRate,
+      conversionByUser
+    }, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const deleteMovement = async (movementId, userToken) => {
+  try {
+    return await axios.delete(`${API_URL}/api/movement/${movementId}`, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+
+/* BUDGETS */
+
+export const getUserBudgets = async (userToken) => {
+  try {
+    return await axios.get(`${API_URL}/api/budgetsByUser`, {
       headers: {
         "x-access-token": userToken
       }

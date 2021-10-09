@@ -8,23 +8,28 @@ import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import RNPickerSelect from 'react-native-picker-select';
 import {showMessage} from 'react-native-flash-message';
-import {createUserWallet, getWalletDependencies} from '../services/requests';
+import {createMovement, getMovementsDependencies} from '../services/requests';
 
 import {useAuthContext} from '../context/authContext';
 import {padding, colors} from '../styles/base';
 
 const schema = yup.object().shape({
-  name: yup.string().required('El nombre es requerido'),
+  title: yup.string().required('El titulo es requerido'),
   description: yup.string().notRequired(),
-  bank: yup.string().required('El banco es requerido'),
-  currency: yup.string().required('La divisa es requerida'),
+  option: yup.string().required('El tipo de movimiento es requerido'),
   amount: yup
     .string()
-    .matches(/^[0-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/, 'Saldo no valido')
-    .required('El saldo inicial es requerido'),
+    .matches(/^[0-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/, 'Monto no valido')
+    .required('El monto es requerido'),
+  movementType: yup.string().required('La clase de movimiento es requerida'),
+  conversionRate: yup.string().notRequired(),
+  conversionByUser: yup
+    .string()
+    .matches(/^[0-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/, 'Monto no valido')
+    .notRequired()
 });
 
-const CreateWalletForm = () => {
+const CreateMovementForm = ({walletInfo}) => {
   const { user } = useAuthContext();
   const navigation = useNavigation();
   const {
@@ -32,21 +37,25 @@ const CreateWalletForm = () => {
     control,
     formState: {errors},
     reset,
+    watch
   } = useForm({
     resolver: yupResolver(schema),
   });
+  const watchedConversion = watch('conversionRate');
   const [loading, setLoading] = useState(true);
-  const [currencies, setCurrencies] = useState([]);
-  const [banks, setBanks] = useState([]);
+  const [options, setOptions] = useState([]);
+  const [movementTypes, setMovementTypes] = useState([]);
+  const [conversionRates, setConversionRates] = useState([]);
 
-  const loadWalletDependencies = useCallback(async () => {
+  const loadMovementsDependencies = useCallback(async () => {
     setLoading(true);
     try {
-      const {data} = await getWalletDependencies(user.accessToken);
-      // console.log(data);
+      const {data} = await getMovementsDependencies(user.accessToken);
+      console.log(data);
 
-      setCurrencies(data.currencies);
-      setBanks(data.banks);
+      setOptions(data.options);
+      setMovementTypes(data.movementType);
+      setConversionRates(data.conversionRate);
       setLoading(false);
     } catch (error) {
       console.log(error.response);
@@ -60,27 +69,27 @@ const CreateWalletForm = () => {
   }, [user]);
 
   useEffect(() => {
-    loadWalletDependencies();
-  }, [loadWalletDependencies]);
+    loadMovementsDependencies();
+  }, [loadMovementsDependencies]);
 
   const handleCreatePress = async data => {
     try {
       console.log(data);
 
-      const response = await createUserWallet(data, user.accessToken);
+      const response = await createMovement(data, user.accessToken, walletInfo.IDWallets);
       console.log(response);
       showMessage({
-        message: "Monedero creado",
-        description: "Tu monedero se creó correctamente",
+        message: "Movimiento creado",
+        description: "Tu movimiento se creó correctamente",
         type: "success",
       });
       reset();
-      navigation.replace('Wallet', { walletId: response.data.IDWallets });
+      navigation.replace('WalletMovements', { walletInfo });
     } catch (error) {
       console.log(error.response);
       showMessage({
         message: 'Error',
-        description: 'Tu monedero no pudo ser creado, intenta nuevamente',
+        description: 'Tu movimiento no pudo ser creado, intenta nuevamente',
         type: 'error',
       });
     }
@@ -89,7 +98,7 @@ const CreateWalletForm = () => {
   return (
     <View style={styles.formContainer}>
       <View style={styles.formFieldWrapper}>
-        <Text style={styles.labelText}>Nombre</Text>
+        <Text style={styles.labelText}>Titulo</Text>
         <Controller
           control={control}
           render={({field: {onChange, onBlur, value}}) => (
@@ -99,10 +108,10 @@ const CreateWalletForm = () => {
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
-              errorMessage={errors.name?.message}
+              errorMessage={errors.title?.message}
             />
           )}
-          name="name"
+          name="title"
           defaultValue=""
         />
       </View>
@@ -129,7 +138,7 @@ const CreateWalletForm = () => {
       </View>
 
       <View style={styles.formFieldWrapper}>
-        <Text style={styles.labelText}>Banco</Text>
+        <Text style={styles.labelText}>Tipo de movimiento</Text>
         {loading ? (
           <Text>Cargando...</Text>
         ) : (
@@ -140,72 +149,34 @@ const CreateWalletForm = () => {
                 onValueChange={value => {
                   onChange(value);
                 }}
-                items={banks.map(bank => {
+                items={options.map(option => {
                   return {
-                    label: bank.name,
-                    value: bank.IDBank,
-                    inputLabel: bank.name,
-                    key: bank.IDBank,
+                    label: option.name,
+                    value: option.IDOptions,
+                    inputLabel: option.name,
+                    key: option.IDOptions,
                   };
                 })}
                 value={value}
                 itemKey={value}
                 style={{...styles.input, inputAndroid: {color: 'black'}}}
-                placeholder={{label: 'Selecciona un banco'}}
+                placeholder={{label: 'Selecciona el tipo de movimiento'}}
                 {...props}
               />
             )}
-            name="bank"
+            name="option"
             defaultValue=""
           />
         )}
         <ErrorMessage
           errors={errors}
-          name="bank"
+          name="option"
           render={({message}) => <Text style={{paddingLeft: 10, color: colors.warning}}>{message}</Text>}
         />
       </View>
 
       <View style={styles.formFieldWrapper}>
-        <Text style={styles.labelText}>Divisa</Text>
-        {loading ? (
-          <Text>Cargando...</Text>
-        ) : (
-          <Controller
-            control={control}
-            render={({field: {onChange, value, ...props}}) => (
-              <RNPickerSelect
-                onValueChange={value => {
-                  onChange(value);
-                }}
-                items={currencies.map(currency => {
-                  return {
-                    label: `${currency.name} (${currency.symbol})`,
-                    value: currency.IDCurrencyType,
-                    inputLabel: `${currency.name} (${currency.symbol})`,
-                    key: currency.IDCurrencyType,
-                  };
-                })}
-                value={value}
-                itemKey={value}
-                style={{...styles.input, inputAndroid: {color: 'black'}}}
-                placeholder={{label: 'Selecciona una divisa'}}
-                {...props}
-              />
-            )}
-            name="currency"
-            defaultValue=""
-          />
-        )}
-        <ErrorMessage
-          errors={errors}
-          name="currency"
-          render={({message}) => <Text style={{paddingLeft: 10, color: colors.warning}}>{message}</Text>}
-        />
-      </View>
-
-      <View style={styles.formFieldWrapper}>
-        <Text style={styles.labelText}>Saldo inicial</Text>
+        <Text style={styles.labelText}>Monto</Text>
         <Controller
           control={control}
           render={({field: {onChange, onBlur, value}}) => (
@@ -223,6 +194,108 @@ const CreateWalletForm = () => {
           defaultValue=""
         />
       </View>
+
+      <View style={styles.formFieldWrapper}>
+        <Text style={styles.labelText}>Clase de movimiento</Text>
+        {loading ? (
+          <Text>Cargando...</Text>
+        ) : (
+          <Controller
+            control={control}
+            render={({field: {onChange, value, ...props}}) => (
+              <RNPickerSelect
+                onValueChange={value => {
+                  onChange(value);
+                }}
+                items={movementTypes.map(mType => {
+                  return {
+                    label: mType.name,
+                    value: mType.IDMovementType,
+                    inputLabel: mType.name,
+                    key: mType.IDMovementType,
+                  };
+                })}
+                value={value}
+                itemKey={value}
+                style={{...styles.input, inputAndroid: {color: 'black'}}}
+                placeholder={{label: 'Selecciona una clase de movimiento'}}
+                {...props}
+              />
+            )}
+            name="movementType"
+            defaultValue=""
+          />
+        )}
+        <ErrorMessage
+          errors={errors}
+          name="movementType"
+          render={({message}) => <Text style={{paddingLeft: 10, color: colors.warning}}>{message}</Text>}
+        />
+      </View>
+
+      <View style={styles.formFieldWrapper}>
+        <Text style={styles.labelText}>Tipo de conversión (opcional)</Text>
+        {loading ? (
+          <Text>Cargando...</Text>
+        ) : (
+          <Controller
+            control={control}
+            render={({field: {onChange, value, ...props}}) => (
+              <RNPickerSelect
+                onValueChange={value => {
+                  onChange(value);
+                }}
+                items={conversionRates.map(cRate => {
+                  return {
+                    label: cRate.name,
+                    value: cRate.IDConversionRate,
+                    inputLabel: cRate.name,
+                    key: cRate.IDConversionRate,
+                  };
+                })}
+                value={value}
+                itemKey={value}
+                style={{...styles.input, inputAndroid: {color: 'black'}}}
+                placeholder={{label: 'Selecciona el tipo de conversión'}}
+                {...props}
+              />
+            )}
+            name="conversionRate"
+            defaultValue=""
+          />
+        )}
+        <ErrorMessage
+          errors={errors}
+          name="conversionRate"
+          render={({message}) => <Text style={{paddingLeft: 10, color: colors.warning}}>{message}</Text>}
+        />
+      </View>
+      
+      {
+        watchedConversion === 8 ? (
+          <View style={styles.formFieldWrapper}>
+            <Text style={styles.labelText}>Conversión propia</Text>
+            <Controller
+              control={control}
+              render={({field: {onChange, onBlur, value}}) => (
+                <Input
+                  placeholder="0.00"
+                  style={styles.input}
+                  onBlur={onBlur}
+                  keyboardType="decimal-pad"
+                  onChangeText={onChange}
+                  value={value}
+                  secureTextEntry
+                  errorMessage={errors.conversionByUser?.message}
+                />
+              )}
+              name="conversionByUser"
+              defaultValue=""
+            />
+          </View>
+        ) : null
+      }
+
       <View style={styles.buttonContainer}>
         <Button
           title="Crear"
@@ -270,4 +343,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CreateWalletForm;
+export default CreateMovementForm;

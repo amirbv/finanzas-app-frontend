@@ -1,26 +1,25 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {View, ScrollView, StyleSheet} from 'react-native';
-import { Text, Avatar, Button } from 'react-native-elements';
-import {showMessage} from 'react-native-flash-message';
-import UpdateWalletForm from '../../components/UpdateWalletForm';
-import {useAuthContext} from '../../context/authContext';
-import { getWalletInfo, deleteWallet } from '../../services/requests';
+import { ScrollView, View, StyleSheet } from 'react-native';
+import { Avatar, Text, Button } from 'react-native-elements';
+import { showMessage } from "react-native-flash-message";
+import { useAuthContext } from '../../context/authContext';
+import { deleteMovement, getSingleMovement } from '../../services/requests';
 import { colors } from '../../styles/base';
 
-const WalletScreen = ({route, navigation}) => {
-  const {walletId} = route.params;
-  const {user} = useAuthContext();
+const MovementInfoScreen = ({ route, navigation }) => {
+  const { movementId, walletInfo } = route.params;
+  const { user } = useAuthContext();
   const [loading, setLoading] = useState(false);
-  const [walletInfo, setWalletInfo] = useState(null);
+  const [movementInfo, setMovementInfo] = useState(null);
 
-  const loadWalletInfo = useCallback(async () => {
+  const loadMovementInfo = useCallback(async () => {
     setLoading(true);
     try {
-      const {data} = await getWalletInfo(user.accessToken, walletId);
+      const {data} = await getSingleMovement(movementId, user.accessToken);
       console.log(data);
 
-      setWalletInfo(data);
-      navigation.setOptions({title: `Detalles de: ${data.name}`});
+      setMovementInfo(data);
+      navigation.setOptions({title: `Detalles de: ${data.title}`});
       setLoading(false);
     } catch (error) {
       console.log(error.response);
@@ -31,33 +30,33 @@ const WalletScreen = ({route, navigation}) => {
       });
       setLoading(false);
     }
-  }, [user, walletId]);
+  }, [user.accessToken, movementId]);
 
   useEffect(() => {
-    loadWalletInfo();
-  }, [loadWalletInfo]);
-
+    loadMovementInfo();
+  }, [loadMovementInfo]);
+  
   const handleDeletePress = async () => {
     try {
-      await deleteWallet(walletId, user.accessToken);
+      await deleteMovement(movementId, user.accessToken);
       showMessage({
         message: 'Eliminado correctamente',
-        description: 'El monedero se eliminó correctamente',
+        description: 'El movimiento se eliminó correctamente',
         type: 'success',
       });
-      navigation.navigate('InnerHome');
+      navigation.navigate("WalletMovements", { walletInfo });
     } catch (error) {
       console.log(error.response);
       showMessage({
         message: 'Error',
-        description: 'El monedero no pudo ser eliminado correctamente',
+        description: 'El movimiento no pudo ser eliminado correctamente',
         type: 'error',
       });
     }
   }
 
-  const updateWalletInfo = () => {
-    loadWalletInfo();
+  const updateMovementInfo = () => {
+    loadMovementInfo();
   }
 
   return (
@@ -70,32 +69,27 @@ const WalletScreen = ({route, navigation}) => {
             </Text>
           </View>
         ) : null}
-        {walletInfo ? (
+        {movementInfo ? (
           <>
             <View>
               <View style={styles.imageContainer}>
                 <Avatar
                   rounded
                   size="xlarge"
-                  icon={{name: 'wallet', type: 'fontisto'}}
+                  icon={{name: 'compare-vertical', type: 'material-community'}}
                   overlayContainerStyle={{
                     backgroundColor: colors.primary,
                     marginVertical: 5,
                   }}
                 />
               </View>
-              <Text h1>{walletInfo.name}</Text>
-              <Text h4>Saldo: {walletInfo.amount} {walletInfo.CurrencyType.symbol}</Text>
-              <Text>Banco: {walletInfo.Banks.name}</Text>
-              <Text>{walletInfo.description}</Text>
-              <Button
-                title="Ver movimientos"
-                type="clear"
-                titleStyle={{ color: colors.primary }}
-                containerStyle={{ marginVertical: 10 }}
-                onPress={() => navigation.navigate("WalletMovements", { walletInfo })}
-              />
-              <UpdateWalletForm walletInfo={walletInfo} onUpdate={updateWalletInfo} />
+              <Text h1>{movementInfo.title}</Text>
+              <Text h4>Monto: {movementInfo.amount} {walletInfo.CurrencyType.symbol}</Text>
+              {movementInfo.conversionAmount && <Text h4>Conversion: {movementInfo.conversionAmount} {movementInfo.ConversionRates.name}</Text>}
+              <Text>{movementInfo.description}</Text>
+              <Text>Tipo de movimiento: {movementInfo.Options.name}</Text>
+              <Text>Clase de movimiento: {movementInfo.MovementTypes.name}</Text>
+              
               <Button
                 title="Eliminar"
                 type="clear"
@@ -114,8 +108,8 @@ const WalletScreen = ({route, navigation}) => {
         ) : null}
       </View>
     </ScrollView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -143,4 +137,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WalletScreen;
+export default MovementInfoScreen;

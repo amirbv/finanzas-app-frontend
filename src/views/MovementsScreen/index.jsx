@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useCallback, useState } from 'react'
 import { View, SafeAreaView, StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import { Card, Text, FAB } from "react-native-elements";
@@ -11,6 +12,7 @@ const MovementsScreen = ({ route, navigation }) => {
   const { walletInfo } = route.params;
   const [loading, setLoading] = useState(false);
   const [movements, setMovements] = useState([]);
+  const isFocused = useIsFocused();
 
   const loadMovements = useCallback(async () => {
     setLoading(true);
@@ -37,13 +39,13 @@ const MovementsScreen = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
-    loadMovements();
-  }, [loadMovements]);
+    if (isFocused) loadMovements();
+  }, [isFocused,loadMovements]);
 
   const RenderItem = ({ item }) => (
     <TouchableOpacity
       activeOpacity={0.8}
-      // onPress={() => navigation.navigate('Wallet', { walletId: item.IDWallets })}
+      onPress={() => navigation.navigate('Movement', { movementId: item.IDMovements, walletInfo })}
     >
       <Card>
         <Card.Title h4>{item.title}</Card.Title>

@@ -6,6 +6,7 @@ import WalletScreen from '../views/WalletScreen';
 import MovementsScreen from '../views/MovementsScreen';
 import CreateMovementScreen from '../views/CreateMovementScreen';
 import { colors } from '../styles/base';
+import MovementInfoScreen from '../views/MovementInfoScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -43,6 +44,11 @@ const HomeNavigator = () => {
         name="CreateMovement"
         component={CreateMovementScreen}
         options={{ title: "Crear movimiento en: cargando..." }}
+      />
+      <Stack.Screen
+        name="Movement"
+        component={MovementInfoScreen}
+        options={{ title: "Detalles de: cargando..." }}
       />
     </Stack.Navigator>
   );

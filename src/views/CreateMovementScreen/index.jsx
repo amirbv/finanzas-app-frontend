@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { Text } from 'react-native-elements';
-import CreateWalletForm from '../../components/CreateWalletForm';
+import CreateMovementForm from '../../components/CreateMovementForm';
 
 const CreateMovementScreen = ({ route, navigation }) => {
   const { walletInfo } = route.params;
@@ -14,7 +14,7 @@ const CreateMovementScreen = ({ route, navigation }) => {
     <ScrollView>
       <View style={styles.container}>
         <Text h3>Crear movimiento</Text>
-        <CreateWalletForm />
+        <CreateMovementForm walletInfo={walletInfo} />
       </View>
     </ScrollView>
   )
