@@ -62,6 +62,20 @@ export const getStates = async () => {
   }
 };
 
+export const recoverPasswordRequest = async (data) => {
+  try {
+    return await axios.post(`${API_URL}/api/users/recover`, data, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).catch(error => {
+      throw error
+    });
+  } catch (error) {
+    throw error
+  }
+};
+
 /* USER PROFILE */
 export const getUserData = async (userToken) => {
   try {

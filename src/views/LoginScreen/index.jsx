@@ -20,7 +20,7 @@ const LoginScreen = ({ navigation }) => {
     resolver: yupResolver(schema)
   });
 
-  const handleLogin = async(data) => {
+  const handleLogin = async (data) => {
     await loginUser(data.email, data.password)
       .catch(error => {
         Alert.alert(
@@ -92,12 +92,21 @@ const LoginScreen = ({ navigation }) => {
 
         </View>
 
-        <View>
-          <Text>No tienes una cuenta?</Text>
+        <View style={{marginVertical: 5}}>
+          <Text style={{textAlign: 'center'}}>No tienes una cuenta?</Text>
           <Button
             title="Crea una!"
             type="clear"
             onPress={() => navigation.navigate("Signup")}
+          />
+        </View>
+
+        <View style={{marginVertical: 5}}>
+          <Text style={{textAlign: 'center'}}>Olvidaste tu contraseña?</Text>
+          <Button
+            title="Recuperar contraseña"
+            type="clear"
+            onPress={() => navigation.navigate("RecoverPassword")}
           />
         </View>
 
@@ -108,9 +117,3 @@ const LoginScreen = ({ navigation }) => {
 };
 
 export default LoginScreen;
-
-const inputStyles = StyleSheet.create({
-  input: {
-    width: '100%',
-  }
-})

@@ -11,6 +11,7 @@ import HomeNavigator from './HomeNavigator';
 import BudgetNavigator from './BudgetNavigator';
 import ProfileNavigator from './ProfileNavigator';
 import { colors } from '../styles/base';
+import RecoverPasswordScreen from '../views/RecoverPasswordScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -39,6 +40,14 @@ const Routes = () => {
             component={SignUpScreen}
             options={{
               title: 'Crear cuenta',
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="RecoverPassword"
+            component={RecoverPasswordScreen}
+            options={{
+              title: 'Recuperar contraseña',
               headerShown: false,
             }}
           />
