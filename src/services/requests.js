@@ -136,6 +136,20 @@ export const updatePassword = async ({
   }
 };
 
+export const deleteUser = async (userToken) => {
+  try {
+    return await axios.delete(`${API_URL}/api/users/delete`, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 /* WALLETS */
 
 export const getUserWallets = async (userToken) => {

@@ -1,12 +1,12 @@
-import { useIsFocused } from '@react-navigation/native';
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Alert, StyleSheet, ScrollView } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import { Text, Avatar, Button } from 'react-native-elements';
 import { showMessage, hideMessage } from "react-native-flash-message";
 import PasswordForm from '../../components/PasswordForm';
 import ProfileForm from '../../components/ProfileForm';
 import { useAuthContext } from '../../context/authContext';
-import { getUserData } from '../../services/requests';
+import { deleteUser, getUserData } from '../../services/requests';
 import { colors } from '../../styles/base';
 
 const ProfileScreen = ({ navigation }) => {
@@ -42,6 +42,46 @@ const ProfileScreen = ({ navigation }) => {
     loadUser();
   }
 
+  const deleteUserPress = async () => {
+    try {
+      await deleteUser(user.accessToken);
+      logoutUser();
+      showMessage({
+        message: "Cuenta eliminada",
+        type: "info",
+      });
+    } catch (error) {
+      console.log(error);
+      showMessage({
+        message: "Error",
+        description: 'No se pudo eliminar su cuenta intente nuevamente',
+        type: "error",
+      });
+    }
+
+  }
+
+  const showConfirmDialog = () => {
+    return Alert.alert(
+      "¿Estas seguro?",
+      "¿Estas seguro de eliminar tu cuenta?",
+      [
+        // The "Yes" button
+        {
+          text: "Si",
+          onPress: () => {
+            deleteUserPress();
+          },
+        },
+        // The "No" button
+        // Does nothing but dismiss the dialog when tapped
+        {
+          text: "Cancelar",
+        },
+      ]
+    );
+  };
+
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -68,12 +108,21 @@ const ProfileScreen = ({ navigation }) => {
             <ProfileForm userData={userData} onUpdate={updateUser} />
             <PasswordForm />
             <Button
-              title="Logout!"
+              title="Cerrar sesión"
               type="clear"
               titleStyle={{ color: colors.warning }}
               containerStyle={{ marginVertical: 10 }}
               onPress={() => logoutUser()}
             />
+            <View>
+              <Button
+                title="Eliminar cuenta"
+                type="clear"
+                titleStyle={{ color: colors.warning }}
+                containerStyle={{ marginVertical: 10 }}
+                onPress={() => showConfirmDialog()}
+              />
+            </View>
           </>
         )
           : !loadingUser ? (
