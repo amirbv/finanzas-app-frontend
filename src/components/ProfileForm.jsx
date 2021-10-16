@@ -56,9 +56,9 @@ const ProfileForm = ({ userData, onUpdate }) => {
 
   const handleUpdatePress = async data => {
     try {
-      console.log(data)
+      // console.log(data)
       const response = await updateUser(data, user.accessToken);
-      console.log(response);
+      // console.log(response);
       showMessage({
         message: "Perfil actualizado",
         description: "Tu perfil fue actualizado correctamente",

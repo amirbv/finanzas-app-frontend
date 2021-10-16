@@ -1,14 +1,13 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {View, StyleSheet} from 'react-native';
 import { Button, Input, Text } from 'react-native-elements';
-import { useNavigation } from '@react-navigation/native';
 import {useForm, Controller} from 'react-hook-form';
 import {ErrorMessage} from '@hookform/error-message';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import RNPickerSelect from 'react-native-picker-select';
 import {showMessage} from 'react-native-flash-message';
-import {createUserWallet, getWalletDependencies, updateWallet} from '../services/requests';
+import {getWalletDependencies, updateWallet} from '../services/requests';
 
 import {useAuthContext} from '../context/authContext';
 import {padding, colors} from '../styles/base';
@@ -26,7 +25,6 @@ const schema = yup.object().shape({
 
 const UpdateWalletForm = ({ walletInfo, onUpdate }) => {
   const { user } = useAuthContext();
-  const navigation = useNavigation();
   const [editting, setEditting] = useState(false);
   const {
     handleSubmit,
@@ -67,8 +65,6 @@ const UpdateWalletForm = ({ walletInfo, onUpdate }) => {
 
   const handleUpdatePress = async data => {
     try {
-      console.log(data);
-
       const response = await updateWallet(data, walletInfo.IDWallets, user.accessToken);
       console.log(response);
       showMessage({
@@ -125,7 +121,6 @@ const UpdateWalletForm = ({ walletInfo, onUpdate }) => {
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
-              secureTextEntry
               errorMessage={errors.description?.message}
               disabled={!editting}
             />

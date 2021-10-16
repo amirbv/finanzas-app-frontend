@@ -17,7 +17,7 @@ const WalletScreen = ({route, navigation}) => {
     setLoading(true);
     try {
       const {data} = await getWalletInfo(user.accessToken, walletId);
-      console.log(data);
+      // console.log(data);
 
       setWalletInfo(data);
       navigation.setOptions({title: `Detalles de: ${data.name}`});

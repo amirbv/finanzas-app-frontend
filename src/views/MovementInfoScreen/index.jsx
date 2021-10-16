@@ -3,6 +3,7 @@ import { ScrollView, View, StyleSheet } from 'react-native';
 import { Avatar, Text, Button } from 'react-native-elements';
 import { showMessage } from "react-native-flash-message";
 import { useAuthContext } from '../../context/authContext';
+import UpdateMovementForm from '../../components/UpdateMovementForm';
 import { deleteMovement, getSingleMovement } from '../../services/requests';
 import { colors } from '../../styles/base';
 
@@ -16,7 +17,7 @@ const MovementInfoScreen = ({ route, navigation }) => {
     setLoading(true);
     try {
       const {data} = await getSingleMovement(movementId, user.accessToken);
-      console.log(data);
+      // console.log(data);
 
       setMovementInfo(data);
       navigation.setOptions({title: `Detalles de: ${data.title}`});
@@ -85,11 +86,15 @@ const MovementInfoScreen = ({ route, navigation }) => {
               </View>
               <Text h1>{movementInfo.title}</Text>
               <Text h4>Monto: {movementInfo.amount} {walletInfo.CurrencyType.symbol}</Text>
-              {movementInfo.conversionAmount && <Text h4>Conversion: {movementInfo.conversionAmount} {movementInfo.ConversionRates.name}</Text>}
+              {movementInfo.conversionAmount ? (
+                <Text h4>Conversion: {movementInfo.conversionAmount} {movementInfo.ConversionRates.name}</Text>
+              ) : null}
               <Text>{movementInfo.description}</Text>
               <Text>Tipo de movimiento: {movementInfo.Options.name}</Text>
               <Text>Clase de movimiento: {movementInfo.MovementTypes.name}</Text>
               
+              <UpdateMovementForm movementInfo={movementInfo} onUpdate={updateMovementInfo} />
+
               <Button
                 title="Eliminar"
                 type="clear"

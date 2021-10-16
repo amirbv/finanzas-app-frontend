@@ -65,8 +65,6 @@ const CreateWalletForm = () => {
 
   const handleCreatePress = async data => {
     try {
-      console.log(data);
-
       const response = await createUserWallet(data, user.accessToken);
       console.log(response);
       showMessage({
@@ -119,7 +117,6 @@ const CreateWalletForm = () => {
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
-              secureTextEntry
               errorMessage={errors.description?.message}
             />
           )}

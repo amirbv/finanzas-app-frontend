@@ -1,14 +1,13 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {View, StyleSheet} from 'react-native';
-import { Button, Input, Text } from 'react-native-elements';
-import { useNavigation } from '@react-navigation/native';
+import {Button, Input, Text} from 'react-native-elements';
 import {useForm, Controller} from 'react-hook-form';
 import {ErrorMessage} from '@hookform/error-message';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import RNPickerSelect from 'react-native-picker-select';
 import {showMessage} from 'react-native-flash-message';
-import {createMovement, getMovementsDependencies} from '../services/requests';
+import {getMovementsDependencies, updateMovement} from '../services/requests';
 
 import {useAuthContext} from '../context/authContext';
 import {padding, colors} from '../styles/base';
@@ -26,18 +25,18 @@ const schema = yup.object().shape({
   conversionByUser: yup
     .string()
     .matches(/^[0-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/, 'Monto no valido')
-    .notRequired()
+    .notRequired(),
 });
 
-const CreateMovementForm = ({walletInfo}) => {
-  const { user } = useAuthContext();
-  const navigation = useNavigation();
+const UpdateMovementForm = ({movementInfo, onUpdate}) => {
+  const {user} = useAuthContext();
+  const [editting, setEditting] = useState(false);
   const {
     handleSubmit,
     control,
     formState: {errors},
     reset,
-    watch
+    watch,
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -72,24 +71,28 @@ const CreateMovementForm = ({walletInfo}) => {
     loadMovementsDependencies();
   }, [loadMovementsDependencies]);
 
-  const handleCreatePress = async data => {
-    try {
-      console.log(data);
+  const toggleEditting = () => setEditting(prevEditting => !prevEditting);
 
-      const response = await createMovement(data, user.accessToken, walletInfo.IDWallets);
-      console.log(response);
+  const handleUpdatePress = async data => {
+    try {
+      const response = await updateMovement(
+        data,
+        user.accessToken,
+        movementInfo.IDMovements,
+      );
       showMessage({
-        message: "Movimiento creado",
-        description: "Tu movimiento se creó correctamente",
-        type: "success",
+        message: 'Movimiento actualizado',
+        description: 'Tu movimiento se actualizó correctamente',
+        type: 'success',
       });
-      reset();
-      navigation.replace('WalletMovements', { walletInfo });
+      onUpdate();
+      toggleEditting();
     } catch (error) {
       console.log(error.response);
       showMessage({
         message: 'Error',
-        description: 'Tu movimiento no pudo ser creado, intenta nuevamente',
+        description:
+          'Tu movimiento no pudo ser actualizado, intenta nuevamente',
         type: 'error',
       });
     }
@@ -97,6 +100,7 @@ const CreateMovementForm = ({walletInfo}) => {
 
   return (
     <View style={styles.formContainer}>
+      <Text h3>Actualizar movimiento</Text>
       <View style={styles.formFieldWrapper}>
         <Text style={styles.labelText}>Titulo</Text>
         <Controller
@@ -109,10 +113,11 @@ const CreateMovementForm = ({walletInfo}) => {
               onChangeText={onChange}
               value={value}
               errorMessage={errors.title?.message}
+              disabled={!editting}
             />
           )}
           name="title"
-          defaultValue=""
+          defaultValue={movementInfo.title}
         />
       </View>
       <View style={styles.formFieldWrapper}>
@@ -129,10 +134,11 @@ const CreateMovementForm = ({walletInfo}) => {
               onChangeText={onChange}
               value={value}
               errorMessage={errors.description?.message}
+              disabled={!editting}
             />
           )}
           name="description"
-          defaultValue=""
+          defaultValue={movementInfo.description}
         />
       </View>
 
@@ -159,18 +165,23 @@ const CreateMovementForm = ({walletInfo}) => {
                 value={value}
                 itemKey={value}
                 style={{...styles.input, inputAndroid: {color: 'black'}}}
-                placeholder={{label: 'Selecciona el tipo de movimiento'}}
+                placeholder={{ label: 'Selecciona el tipo de movimiento' }}
+                disabled={!editting}
                 {...props}
               />
             )}
             name="option"
-            defaultValue=""
+            defaultValue={movementInfo.Options.IDOptions}
           />
         )}
         <ErrorMessage
           errors={errors}
           name="option"
-          render={({message}) => <Text style={{paddingLeft: 10, color: colors.warning}}>{message}</Text>}
+          render={({message}) => (
+            <Text style={{paddingLeft: 10, color: colors.warning}}>
+              {message}
+            </Text>
+          )}
         />
       </View>
 
@@ -186,11 +197,12 @@ const CreateMovementForm = ({walletInfo}) => {
               onChangeText={onChange}
               keyboardType="decimal-pad"
               value={value}
+              disabled={!editting}
               errorMessage={errors.amount?.message}
             />
           )}
           name="amount"
-          defaultValue=""
+          defaultValue={`${movementInfo.amount}`}
         />
       </View>
 
@@ -217,18 +229,23 @@ const CreateMovementForm = ({walletInfo}) => {
                 value={value}
                 itemKey={value}
                 style={{...styles.input, inputAndroid: {color: 'black'}}}
-                placeholder={{label: 'Selecciona una clase de movimiento'}}
+                placeholder={{ label: 'Selecciona una clase de movimiento' }}
+                disabled={!editting}
                 {...props}
               />
             )}
             name="movementType"
-            defaultValue=""
+            defaultValue={movementInfo.MovementTypes.IDMovementType}
           />
         )}
         <ErrorMessage
           errors={errors}
           name="movementType"
-          render={({message}) => <Text style={{paddingLeft: 10, color: colors.warning}}>{message}</Text>}
+          render={({message}) => (
+            <Text style={{paddingLeft: 10, color: colors.warning}}>
+              {message}
+            </Text>
+          )}
         />
       </View>
 
@@ -255,52 +272,64 @@ const CreateMovementForm = ({walletInfo}) => {
                 value={value}
                 itemKey={value}
                 style={{...styles.input, inputAndroid: {color: 'black'}}}
-                placeholder={{label: 'Selecciona el tipo de conversión'}}
+                placeholder={{ label: 'Selecciona el tipo de conversión' }}
+                disabled={!editting}
                 {...props}
               />
             )}
             name="conversionRate"
-            defaultValue=""
+            defaultValue={movementInfo.ConversionRates.IDConversionRate}
           />
         )}
         <ErrorMessage
           errors={errors}
           name="conversionRate"
-          render={({message}) => <Text style={{paddingLeft: 10, color: colors.warning}}>{message}</Text>}
+          render={({message}) => (
+            <Text style={{paddingLeft: 10, color: colors.warning}}>
+              {message}
+            </Text>
+          )}
         />
       </View>
-      
-      {
-        watchedConversion === 8 ? (
-          <View style={styles.formFieldWrapper}>
-            <Text style={styles.labelText}>Conversión propia</Text>
-            <Controller
-              control={control}
-              render={({field: {onChange, onBlur, value}}) => (
-                <Input
-                  placeholder="0.00"
-                  style={styles.input}
-                  onBlur={onBlur}
-                  keyboardType="decimal-pad"
-                  onChangeText={onChange}
-                  value={value}
-                  errorMessage={errors.conversionByUser?.message}
-                />
-              )}
-              name="conversionByUser"
-              defaultValue=""
-            />
-          </View>
-        ) : null
-      }
+
+      {watchedConversion === 8 ? (
+        <View style={styles.formFieldWrapper}>
+          <Text style={styles.labelText}>Conversión propia</Text>
+          <Controller
+            control={control}
+            render={({field: {onChange, onBlur, value}}) => (
+              <Input
+                placeholder="0.00"
+                style={styles.input}
+                onBlur={onBlur}
+                keyboardType="decimal-pad"
+                onChangeText={onChange}
+                value={value}
+                disabled={!editting}
+                errorMessage={errors.conversionByUser?.message}
+              />
+            )}
+            name="conversionByUser"
+            defaultValue={movementInfo.conversionByUser}
+          />
+        </View>
+      ) : null}
 
       <View style={styles.buttonContainer}>
         <Button
-          title="Crear"
+          title={!editting ? "Editar" : "Cancelar"}
+          buttonStyle={[styles.button,{backgroundColor: !editting ? colors.primary : colors.warning}]}
+          type="solid"
+          raised
+          onPress={toggleEditting}
+        />
+        <Button
+          title="Actualizar"
           buttonStyle={[styles.button, {backgroundColor: colors.primary}]}
           type="solid"
           raised
-          onPress={handleSubmit(handleCreatePress)}
+          disabled={!editting}
+          onPress={handleSubmit(handleUpdatePress)}
         />
       </View>
     </View>
@@ -341,4 +370,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CreateMovementForm;
+export default UpdateMovementForm;

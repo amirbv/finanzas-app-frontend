@@ -1,13 +1,26 @@
 import React from 'react';
-import { View } from 'react-native';
+import { ScrollView, View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-elements';
+import CreateBudgetForm from '../../components/CreateBudgetForm';
 
 const CreateBudgetScreen = ({ navigation }) => {
   return (
-    <View>
-      <Text>create budget</Text>
-    </View>
+    <ScrollView>
+      <View style={styles.container}>
+        <Text h3>Crear presupuesto</Text>
+        <CreateBudgetForm />
+      </View>
+    </ScrollView>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    marginHorizontal: 18,
+    marginTop: 10
+  }
+});
 
 export default CreateBudgetScreen;

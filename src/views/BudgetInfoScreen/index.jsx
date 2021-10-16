@@ -2,26 +2,26 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {View, ScrollView, StyleSheet} from 'react-native';
 import { Text, Avatar, Button } from 'react-native-elements';
 import {showMessage} from 'react-native-flash-message';
-import UpdateWalletForm from '../../components/UpdateWalletForm';
+import UpdateBudgetForm from '../../components/UpdateBudgetForm';
 import {useAuthContext} from '../../context/authContext';
-import { getWalletInfo, deleteWallet } from '../../services/requests';
+import { deleteBudget, getSingleBudget } from '../../services/requests';
 import { colors } from '../../styles/base';
 
 const BudgetInfoScreen = ({ route, navigation }) => {
   //this components needs change and adaptation for budgets
-  const {walletId} = route.params;
+  const {budgetId} = route.params;
   const {user} = useAuthContext();
   const [loading, setLoading] = useState(false);
-  const [walletInfo, setWalletInfo] = useState(null);
+  const [budgetInfo, setBudgetInfo] = useState(null);
 
-  const loadWalletInfo = useCallback(async () => {
+  const loadBudgetInfo = useCallback(async () => {
     setLoading(true);
     try {
-      const {data} = await getWalletInfo(user.accessToken, walletId);
+      const {data} = await getSingleBudget(budgetId, user.accessToken);
       console.log(data);
 
-      setWalletInfo(data);
-      navigation.setOptions({title: `Detalles de: ${data.name}`});
+      setBudgetInfo(data);
+      navigation.setOptions({title: `Detalles de: ${data.title}`});
       setLoading(false);
     } catch (error) {
       console.log(error.response);
@@ -32,21 +32,25 @@ const BudgetInfoScreen = ({ route, navigation }) => {
       });
       setLoading(false);
     }
-  }, [user, walletId]);
+  }, [user, budgetId]);
 
   useEffect(() => {
-    loadWalletInfo();
-  }, [loadWalletInfo]);
+    loadBudgetInfo();
+  }, [loadBudgetInfo]);
+
+  const updateBudgetInfo = () => {
+    loadBudgetInfo();
+  }
 
   const handleDeletePress = async () => {
     try {
-      await deleteWallet(walletId, user.accessToken);
+      await deleteBudget(budgetId, user.accessToken);
       showMessage({
         message: 'Eliminado correctamente',
         description: 'El monedero se eliminó correctamente',
         type: 'success',
       });
-      navigation.navigate('InnerHome');
+      navigation.navigate('InnerBudget');
     } catch (error) {
       console.log(error.response);
       showMessage({
@@ -67,32 +71,31 @@ const BudgetInfoScreen = ({ route, navigation }) => {
             </Text>
           </View>
         ) : null}
-        {walletInfo ? (
+        {budgetInfo ? (
           <>
             <View>
               <View style={styles.imageContainer}>
                 <Avatar
                   rounded
                   size="xlarge"
-                  icon={{name: 'wallet', type: 'fontisto'}}
+                  icon={{name: 'file-invoice-dollar', type: 'font-awesome-5'}}
                   overlayContainerStyle={{
                     backgroundColor: colors.primary,
                     marginVertical: 5,
                   }}
                 />
               </View>
-              <Text h1>{walletInfo.name}</Text>
-              <Text h4>Saldo: {walletInfo.amount} {walletInfo.CurrencyType.symbol}</Text>
-              <Text>Banco: {walletInfo.Banks.name}</Text>
-              <Text>{walletInfo.description}</Text>
-              <Button
+              <Text h1>{budgetInfo.title}</Text>
+              <Text h4>Balance: {budgetInfo.balance || 0}</Text>
+              <Text>{budgetInfo.description}</Text>
+              {/* <Button
                 title="Ver movimientos"
                 type="clear"
                 titleStyle={{ color: colors.primary }}
                 containerStyle={{ marginVertical: 10 }}
-                onPress={() => navigation.navigate("WalletMovements", { walletInfo })}
-              />
-              <UpdateWalletForm walletInfo={walletInfo} />
+                onPress={() => navigation.navigate("WalletMovements", { budgetInfo })}
+              /> */}
+              <UpdateBudgetForm budgetInfo={budgetInfo} onUpdate={updateBudgetInfo} />
               <Button
                 title="Eliminar"
                 type="clear"

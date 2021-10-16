@@ -33,17 +33,18 @@ const BudgetScreen = ({ navigation }) => {
   }, [user.accessToken]);
 
   useEffect(() => {
-    loadBudgets();
-  }, [loadBudgets]);
+    if(isFocused) loadBudgets();
+  }, [isFocused, loadBudgets]);
 
   const RenderItem = ({ item }) => (
     <TouchableOpacity
       activeOpacity={0.8}
-      // onPress={() => navigation.navigate('BudgetInfo', { budgetId: item.IDBudgets })}
+      onPress={() => navigation.navigate('BudgetInfo', { budgetId: item.IDBudget })}
     >
       <Card>
-        <Card.Title h4>{item.name}</Card.Title>
+        <Card.Title h4>{item.title}</Card.Title>
         <Text>{item.description}</Text>
+        <Text>{item.balance}</Text>
       </Card>
     </TouchableOpacity>
   );
@@ -66,7 +67,7 @@ const BudgetScreen = ({ navigation }) => {
         <FlatList
           data={budgets}
           renderItem={RenderItem}
-          keyExtractor={item => item.IDBudgets}
+          keyExtractor={item => item.IDBudget}
         />
       </View>
       <FAB

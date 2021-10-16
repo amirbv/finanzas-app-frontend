@@ -305,7 +305,37 @@ export const createMovement = async ({
       title,
       description,
       movementTypeIDMovementType: movementType,
-      amount,
+      amount: parseFloat(amount),
+      conversionRateIDConversionRate: conversionRate,
+      conversionByUser
+    }, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const updateMovement = async ({
+  title,
+  description,
+  option,
+  movementType,
+  amount,
+  conversionRate,
+  conversionByUser
+}, userToken, movementId) => {
+  try {
+    return await axios.put(`${API_URL}/api/movement/${movementId}`, {
+      optionIDOptions: option,
+      title,
+      description,
+      movementTypeIDMovementType: movementType,
+      amount: parseFloat(amount),
       conversionRateIDConversionRate: conversionRate,
       conversionByUser
     }, {
@@ -340,6 +370,62 @@ export const deleteMovement = async (movementId, userToken) => {
 export const getUserBudgets = async (userToken) => {
   try {
     return await axios.get(`${API_URL}/api/budgetsByUser`, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const getSingleBudget = async (budgetId, userToken) => {
+  try {
+    return await axios.get(`${API_URL}/api/budgets/${budgetId}`, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const createBudget = async (data, userToken) => {
+  try {
+    return await axios.post(`${API_URL}/api/budget`, data, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const updateBudget = async (data, budgetId, userToken ) => {
+  try {
+    return await axios.put(`${API_URL}/api/budgets/${budgetId}`, data, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const deleteBudget = async (budgetId, userToken) => {
+  try {
+    return await axios.delete(`${API_URL}/api/budgets/${budgetId}`, {
       headers: {
         "x-access-token": userToken
       }

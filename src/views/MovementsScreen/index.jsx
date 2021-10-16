@@ -17,9 +17,8 @@ const MovementsScreen = ({ route, navigation }) => {
   const loadMovements = useCallback(async () => {
     setLoading(true);
     try {
-      console.log(user.accessToken);
       const { data } = await getMovements(user.accessToken, walletInfo.IDWallets);
-      console.log(data);
+      // console.log(data);
       
       setMovements(data);
       setLoading(false);
