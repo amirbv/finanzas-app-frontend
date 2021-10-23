@@ -1,12 +1,14 @@
-import React from 'react';
+import React, {useState, useEffect, useCallback, useRef} from 'react';
 import {View, StyleSheet} from 'react-native';
-import { Button, Input, Text } from 'react-native-elements';
-import { useNavigation } from '@react-navigation/native';
+import {Button, Input, Text} from 'react-native-elements';
+import {useNavigation} from '@react-navigation/native';
 import {useForm, Controller} from 'react-hook-form';
+import {ErrorMessage} from '@hookform/error-message';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import RNPickerSelect from 'react-native-picker-select';
 import {showMessage} from 'react-native-flash-message';
-import {createBudget} from '../services/requests';
+import {createDetail} from '../services/requests';
 
 import {useAuthContext} from '../context/authContext';
 import {padding, colors} from '../styles/base';
@@ -14,41 +16,48 @@ import {padding, colors} from '../styles/base';
 const schema = yup.object().shape({
   title: yup.string().required('El titulo es requerido'),
   description: yup.string().notRequired(),
-  date: yup
+  option: yup.string().required('El tipo de movimiento es requerido'),
+  amount: yup
     .string()
-    .matches(/^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\-]\d{4}$/, 'Fecha no valida')
-    .required('La fecha es requerida'),
+    .matches(/^[0-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/, 'Monto no valido')
+    .required('El monto es requerido'),
 });
 
-const CreateBudgetForm = () => {
-  const { user } = useAuthContext();
+const CreateDetailForm = ({budgetInfo}) => {
+  const {user} = useAuthContext();
   const navigation = useNavigation();
   const {
     handleSubmit,
     control,
     formState: {errors},
     reset,
+
   } = useForm({
     resolver: yupResolver(schema),
   });
 
-
   const handleCreatePress = async data => {
     try {
-      const response = await createBudget(data, user.accessToken);
+      console.log(data);
+
+      const response = await createDetail(
+        data,
+        user.accessToken,
+        budgetInfo.IDBudget,
+      );
       console.log(response);
       showMessage({
-        message: "Presupuesto creado",
-        description: "Tu presupuesto se creó correctamente",
-        type: "success",
+        message: 'Detalle creado',
+        description: 'Tu detalle se creó correctamente',
+        type: 'success',
       });
       reset();
-      navigation.replace('BudgetInfo', { budgetId: response.data.IDBudget });
+      navigation.navigate('BudgetDetails', {budgetInfo});
     } catch (error) {
       console.log(error.response);
       showMessage({
         message: 'Error',
-        description: 'Tu presupuesto no pudo ser creado, intenta nuevamente',
+        description: 'Tu detalle no pudo ser creado, intenta nuevamente',
         type: 'error',
       });
     }
@@ -62,7 +71,7 @@ const CreateBudgetForm = () => {
           control={control}
           render={({field: {onChange, onBlur, value}}) => (
             <Input
-              placeholder="Titulo"
+              placeholder="Nombre"
               style={styles.input}
               onBlur={onBlur}
               onChangeText={onChange}
@@ -96,24 +105,65 @@ const CreateBudgetForm = () => {
       </View>
 
       <View style={styles.formFieldWrapper}>
-        <Text style={styles.labelText}>Fecha de notificación</Text>
+        <Text style={styles.labelText}>Tipo de detalle</Text>
+        <Controller
+          control={control}
+          render={({field: {onChange, value, ...props}}) => (
+            <RNPickerSelect
+              onValueChange={value => {
+                onChange(value);
+              }}
+              items={[
+                {value: 1, name: 'Ingreso'},
+                {value: 2, name: 'Egreso'},
+              ].map(option => {
+                return {
+                  label: option.name,
+                  value: option.value,
+                  inputLabel: option.name,
+                  key: option.value,
+                };
+              })}
+              value={value}
+              itemKey={value}
+              style={{...styles.input, inputAndroid: {color: 'black'}}}
+              placeholder={{label: 'Selecciona el tipo de detalle'}}
+              {...props}
+            />
+          )}
+          name="option"
+          defaultValue=""
+        />
+
+        <ErrorMessage
+          errors={errors}
+          name="option"
+          render={({message}) => (
+            <Text style={{paddingLeft: 10, color: colors.warning}}>
+              {message}
+            </Text>
+          )}
+        />
+      </View>
+
+      <View style={styles.formFieldWrapper}>
+        <Text style={styles.labelText}>Monto</Text>
         <Controller
           control={control}
           render={({field: {onChange, onBlur, value}}) => (
             <Input
-              placeholder="DD-MM-AAAA"
+              placeholder="0.00"
               style={styles.input}
               onBlur={onBlur}
               onChangeText={onChange}
-              keyboardType="number-pad"
+              keyboardType="decimal-pad"
               value={value}
-              errorMessage={errors.date?.message}
+              errorMessage={errors.amount?.message}
             />
           )}
-          name="date"
+          name="amount"
           defaultValue=""
         />
-        <Text style={styles.infoText}>Esta fecha no puede ser modificada, elija una adecuadamente</Text>
       </View>
 
       <View style={styles.buttonContainer}>
@@ -146,12 +196,6 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingTop: 10,
   },
-  infoText: {
-    fontSize: 14,
-    marginBottom: 12,
-    paddingLeft: 10,
-    paddingTop: 10,
-  },
   errorMessage: {
     paddingLeft: 10,
     paddingTop: 10,
@@ -169,4 +213,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CreateBudgetForm;
+export default CreateDetailForm;

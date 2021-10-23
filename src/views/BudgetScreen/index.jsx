@@ -45,6 +45,7 @@ const BudgetScreen = ({ navigation }) => {
         <Card.Title h4>{item.title}</Card.Title>
         <Text>{item.description}</Text>
         <Text>{item.balance}</Text>
+        <Text>Fecha de notificación: {new Date(item.notificationDate).toLocaleDateString()}</Text>
       </Card>
     </TouchableOpacity>
   );

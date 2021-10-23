@@ -51,6 +51,7 @@ const LoginScreen = ({ navigation }) => {
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
+                keyboardType="email-address"
                 errorMessage={errors.email?.message}
               />
             )}

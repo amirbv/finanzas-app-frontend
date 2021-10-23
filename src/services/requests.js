@@ -450,3 +450,90 @@ export const deleteBudget = async (budgetId, userToken) => {
     throw error;
   }
 }
+
+export const getBudgetDetails = async (budgetId, userToken) => {
+  try {
+    console.log(budgetId, userToken)
+    return await axios.get(`${API_URL}/api/budgetDetailsByBudget/${budgetId}`, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const getSingleBudgetDetail = async (budgetDetailId, userToken) => {
+  try {
+    return await axios.get(`${API_URL}/api/budgetDetails/${budgetDetailId}`, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const createDetail = async (data, userToken, budgetId) => {
+  try {
+    return await axios.post(`${API_URL}/api/budgetDetail/${budgetId}`, data, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const removeDetail = async (detailId, userToken) => {
+  try {
+    return await axios.delete(`${API_URL}/api/budgetDetail/${detailId}`, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const getWalletsToShow = async (userToken) => {
+  try {
+    return await axios.get(`${API_URL}/api/walletsToShow/`, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const addBudgetToWallet = async (walletId, budgetId,userToken) => {
+  try {
+    return await axios.post(`${API_URL}/api/budgetToMov/${budgetId}`, {
+      wallet: walletId
+    }, {
+      headers: {
+        "x-access-token": userToken
+      }
+    }).catch(error => {
+      throw error;
+    });
+  } catch (error) {
+    throw error;
+  }
+}

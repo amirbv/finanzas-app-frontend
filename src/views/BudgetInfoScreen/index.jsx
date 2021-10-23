@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/core';
 import React, {useCallback, useEffect, useState} from 'react';
 import {View, ScrollView, StyleSheet} from 'react-native';
 import { Text, Avatar, Button } from 'react-native-elements';
@@ -8,7 +9,7 @@ import { deleteBudget, getSingleBudget } from '../../services/requests';
 import { colors } from '../../styles/base';
 
 const BudgetInfoScreen = ({ route, navigation }) => {
-  //this components needs change and adaptation for budgets
+  const isFocused = useIsFocused();
   const {budgetId} = route.params;
   const {user} = useAuthContext();
   const [loading, setLoading] = useState(false);
@@ -21,7 +22,7 @@ const BudgetInfoScreen = ({ route, navigation }) => {
       console.log(data);
 
       setBudgetInfo(data);
-      navigation.setOptions({title: `Detalles de: ${data.title}`});
+      navigation.setOptions({title: `Datos de: ${data.title}`});
       setLoading(false);
     } catch (error) {
       console.log(error.response);
@@ -35,8 +36,8 @@ const BudgetInfoScreen = ({ route, navigation }) => {
   }, [user, budgetId]);
 
   useEffect(() => {
-    loadBudgetInfo();
-  }, [loadBudgetInfo]);
+    if(isFocused)loadBudgetInfo();
+  }, [isFocused, loadBudgetInfo]);
 
   const updateBudgetInfo = () => {
     loadBudgetInfo();
@@ -88,13 +89,21 @@ const BudgetInfoScreen = ({ route, navigation }) => {
               <Text h1>{budgetInfo.title}</Text>
               <Text h4>Balance: {budgetInfo.balance || 0}</Text>
               <Text>{budgetInfo.description}</Text>
-              {/* <Button
-                title="Ver movimientos"
+              <Text>Fecha de notificación: {new Date(budgetInfo.notificationDate).toLocaleDateString()}</Text>
+              <Button
+                title="Ver detalles"
                 type="clear"
                 titleStyle={{ color: colors.primary }}
                 containerStyle={{ marginVertical: 10 }}
-                onPress={() => navigation.navigate("WalletMovements", { budgetInfo })}
-              /> */}
+                onPress={() => navigation.navigate("BudgetDetails", { budgetInfo })}
+              />
+              <Button
+                title="Añadir al monedero"
+                type="clear"
+                titleStyle={{ color: colors.primary, fontSize: 18 }}
+                containerStyle={{ marginVertical: 15 }}
+                onPress={() => navigation.navigate("BudgetToWallet", { budgetInfo })}
+              />
               <UpdateBudgetForm budgetInfo={budgetInfo} onUpdate={updateBudgetInfo} />
               <Button
                 title="Eliminar"
