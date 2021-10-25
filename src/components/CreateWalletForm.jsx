@@ -66,7 +66,7 @@ const CreateWalletForm = () => {
   const handleCreatePress = async data => {
     try {
       const response = await createUserWallet(data, user.accessToken);
-      console.log(response);
+      // console.log(response);
       showMessage({
         message: "Monedero creado",
         description: "Tu monedero se creó correctamente",

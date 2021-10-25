@@ -74,10 +74,10 @@ const CreateMovementForm = ({walletInfo}) => {
 
   const handleCreatePress = async data => {
     try {
-      console.log(data);
+      // console.log(data);
 
       const response = await createMovement(data, user.accessToken, walletInfo.IDWallets);
-      console.log(response);
+      // console.log(response);
       showMessage({
         message: "Movimiento creado",
         description: "Tu movimiento se creó correctamente",

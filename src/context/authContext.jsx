@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { loginRequest, signupRequest } from '../services/requests';
+import Notifications from '../services/Notifications';
 
 const AuthContext = React.createContext(null);
 
@@ -98,7 +99,7 @@ export function AuthProvider(props) {
   async function logoutUser() {
     setUser(null);
     await deleteToken();
-    
+    await Notifications.clearAllLocalNotifications();
   }
 
 

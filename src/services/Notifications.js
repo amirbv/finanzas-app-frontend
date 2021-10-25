@@ -22,23 +22,32 @@ class Notifications {
       () => { }
     );
     PushNotification.getScheduledLocalNotifications(rn => {
-      console.log("SN --- ", rn);
+      console.log("Notification center: ", rn);
     })
   }
 
-  scheduleNotification(date) {
+  scheduleNotification(date, budgetId, title = "", message = "") {
     PushNotification.localNotificationSchedule({
       channelId: 'reminders',
-      title: 'Reminder!!!',
-      message: 'Es un reminder',
+      id: budgetId,
+      title,
+      message,
       date
     });
   }
 
   getScheduledLocalNotifications() {
     PushNotification.getScheduledLocalNotifications(rn => {
-      console.log("notifications: ", rn);
+      console.log("Notification center: ", rn);
     });
+  }
+
+  clearAllLocalNotifications() {
+    PushNotification.cancelAllLocalNotifications();
+  }
+
+  clearSingleNotification(notificationId) {
+    PushNotification.cancelLocalNotification(notificationId);
   }
 }
 

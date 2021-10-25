@@ -12,6 +12,7 @@ import {addBudgetToWallet, getWalletsToShow} from '../services/requests';
 
 import {useAuthContext} from '../context/authContext';
 import {padding, colors} from '../styles/base';
+import Notifications from '../services/Notifications';
 
 const schema = yup.object().shape({
   wallet: yup.string().required('El monedero es requerido'),
@@ -59,12 +60,14 @@ const AddBudgetToWalletForm = ({budgetInfo}) => {
   const handleAddPress = async ({ wallet }) => {
     try {
       const response = await addBudgetToWallet(wallet, budgetInfo.IDBudget, user.accessToken);
-      console.log(response);
+      // console.log(response);
       showMessage({
         message: "Presupuesto añadido",
         description: "Tu presupuesto se añadió correctamente",
         type: "success",
       });
+
+      Notifications.clearSingleNotification(budgetInfo.IDBudget);
       reset();
       navigation.popToTop();
     } catch (error) {

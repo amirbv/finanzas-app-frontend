@@ -1,10 +1,11 @@
 import { useIsFocused } from '@react-navigation/core';
 import React, {useCallback, useEffect, useState} from 'react';
-import {View, ScrollView, StyleSheet} from 'react-native';
+import {View, ScrollView, StyleSheet, Alert} from 'react-native';
 import { Text, Avatar, Button } from 'react-native-elements';
 import {showMessage} from 'react-native-flash-message';
 import UpdateBudgetForm from '../../components/UpdateBudgetForm';
 import {useAuthContext} from '../../context/authContext';
+import Notifications from '../../services/Notifications';
 import { deleteBudget, getSingleBudget } from '../../services/requests';
 import { colors } from '../../styles/base';
 
@@ -51,6 +52,7 @@ const BudgetInfoScreen = ({ route, navigation }) => {
         description: 'El monedero se eliminó correctamente',
         type: 'success',
       });
+      Notifications.clearSingleNotification(budgetId);
       navigation.navigate('InnerBudget');
     } catch (error) {
       console.log(error.response);
@@ -61,6 +63,27 @@ const BudgetInfoScreen = ({ route, navigation }) => {
       });
     }
   }
+
+  const showConfirmDelete = () => {
+    return Alert.alert(
+      "¿Estas seguro de eliminar?",
+      "No podrás deshacer los cambios",
+      [
+        // The "Yes" button
+        {
+          text: "Eliminar",
+          onPress: () => {
+            handleDeletePress();
+          },
+        },
+        // The "No" button
+        // Does nothing but dismiss the dialog when tapped
+        {
+          text: "Cancelar",
+        },
+      ]
+    );
+  };
 
   return (
     <ScrollView>
@@ -110,7 +133,7 @@ const BudgetInfoScreen = ({ route, navigation }) => {
                 type="clear"
                 titleStyle={{ color: colors.warning }}
                 containerStyle={{ marginVertical: 10 }}
-                onPress={handleDeletePress}
+                onPress={showConfirmDelete}
               />
             </View>
           </>

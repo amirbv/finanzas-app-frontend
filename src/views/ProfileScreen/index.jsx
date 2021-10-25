@@ -61,7 +61,7 @@ const ProfileScreen = ({ navigation }) => {
 
   }
 
-  const showConfirmDialog = () => {
+  const showConfirmDelete = () => {
     return Alert.alert(
       "¿Estas seguro?",
       "¿Estas seguro de eliminar tu cuenta?",
@@ -71,6 +71,27 @@ const ProfileScreen = ({ navigation }) => {
           text: "Si",
           onPress: () => {
             deleteUserPress();
+          },
+        },
+        // The "No" button
+        // Does nothing but dismiss the dialog when tapped
+        {
+          text: "Cancelar",
+        },
+      ]
+    );
+  };
+
+  const showConfirmLogout = () => {
+    return Alert.alert(
+      "¿Estas seguro?",
+      "¿Estas seguro de cerrar sesión?",
+      [
+        // The "Yes" button
+        {
+          text: "Cerrar sesión",
+          onPress: () => {
+            logoutUser();
           },
         },
         // The "No" button
@@ -112,15 +133,16 @@ const ProfileScreen = ({ navigation }) => {
               type="clear"
               titleStyle={{ color: colors.warning }}
               containerStyle={{ marginVertical: 10 }}
-              onPress={() => logoutUser()}
+              onPress={() => showConfirmLogout()}
             />
+            <Text style={styles.infoText}>Las notificaciones no serán realizadas al cerrar sesión</Text>
             <View>
               <Button
                 title="Eliminar cuenta"
                 type="clear"
                 titleStyle={{ color: colors.warning }}
                 containerStyle={{ marginVertical: 10 }}
-                onPress={() => showConfirmDialog()}
+                onPress={() => showConfirmDelete()}
               />
             </View>
           </>
@@ -166,6 +188,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#1976b2',
     marginVertical: 12,
     paddingVertical: 6
+  },
+  infoText: {
+    fontSize: 14,
+    marginBottom: 12,
+    paddingLeft: 10,
+    paddingTop: 10,
   }
 });
 

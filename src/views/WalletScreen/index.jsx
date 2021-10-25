@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {View, ScrollView, StyleSheet} from 'react-native';
+import {View, ScrollView, StyleSheet, Alert} from 'react-native';
 import { Text, Avatar, Button } from 'react-native-elements';
 import {showMessage} from 'react-native-flash-message';
 import UpdateWalletForm from '../../components/UpdateWalletForm';
@@ -56,6 +56,27 @@ const WalletScreen = ({route, navigation}) => {
     }
   }
 
+  const showConfirmDelete = () => {
+    return Alert.alert(
+      "¿Estas seguro de eliminar?",
+      "No podrás deshacer los cambios",
+      [
+        // The "Yes" button
+        {
+          text: "Eliminar",
+          onPress: () => {
+            handleDeletePress();
+          },
+        },
+        // The "No" button
+        // Does nothing but dismiss the dialog when tapped
+        {
+          text: "Cancelar",
+        },
+      ]
+    );
+  };
+
   const updateWalletInfo = () => {
     loadWalletInfo();
   }
@@ -101,7 +122,7 @@ const WalletScreen = ({route, navigation}) => {
                 type="clear"
                 titleStyle={{ color: colors.warning }}
                 containerStyle={{ marginVertical: 10 }}
-                onPress={handleDeletePress}
+                onPress={showConfirmDelete}
               />
             </View>
           </>

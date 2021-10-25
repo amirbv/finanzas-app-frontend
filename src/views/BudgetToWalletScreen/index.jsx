@@ -5,7 +5,7 @@ import AddBudgetToWalletForm from '../../components/AddBudgetToWalletForm';
 
 const BudgetToWalletScreen = ({ route, navigation }) => {
   const { budgetInfo } = route.params;
-  console.log(budgetInfo);
+  
   return (
     <ScrollView>
       <View style={styles.container}>

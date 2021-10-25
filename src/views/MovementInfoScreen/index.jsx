@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import { ScrollView, View, StyleSheet } from 'react-native';
+import { ScrollView, View, StyleSheet, Alert } from 'react-native';
 import { Avatar, Text, Button } from 'react-native-elements';
 import { showMessage } from "react-native-flash-message";
 import { useAuthContext } from '../../context/authContext';
@@ -56,6 +56,27 @@ const MovementInfoScreen = ({ route, navigation }) => {
     }
   }
 
+  const showConfirmDelete = () => {
+    return Alert.alert(
+      "¿Estas seguro de eliminar?",
+      "No podrás deshacer los cambios",
+      [
+        // The "Yes" button
+        {
+          text: "Eliminar",
+          onPress: () => {
+            handleDeletePress();
+          },
+        },
+        // The "No" button
+        // Does nothing but dismiss the dialog when tapped
+        {
+          text: "Cancelar",
+        },
+      ]
+    );
+  };
+
   const updateMovementInfo = () => {
     loadMovementInfo();
   }
@@ -100,7 +121,7 @@ const MovementInfoScreen = ({ route, navigation }) => {
                 type="clear"
                 titleStyle={{ color: colors.warning }}
                 containerStyle={{ marginVertical: 10 }}
-                onPress={handleDeletePress}
+                onPress={showConfirmDelete}
               />
             </View>
           </>

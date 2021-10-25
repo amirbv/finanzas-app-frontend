@@ -6,7 +6,6 @@ import { showMessage } from "react-native-flash-message";
 import { useAuthContext } from '../../context/authContext';
 import { getUserWallets } from "../../services/requests";
 import { colors } from "../../styles/base";
-import Notifications from "../../services/Notifications";
 
 const HomeScreen = ({ navigation }) => {
   const { user } = useAuthContext();
@@ -37,22 +36,15 @@ const HomeScreen = ({ navigation }) => {
     if (isFocused) loadWallets();
   }, [isFocused, loadWallets]);
 
-  const setNotif = () => {
-    "15-12-2021".split("-").reverse();
-    const date = new Date("2021-11-15")
-    console.log(date)
-    Notifications.scheduleNotification(date);
-    Notifications.getScheduledLocalNotifications();
-  }
-
   const RenderItem = ({ item }) => (
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={() => navigation.navigate('Wallet', { walletId: item.IDWallets })}
     >
       <Card>
-        <Card.Title h4>{item.name}</Card.Title>
+        <Card.Title h3>{item.name}</Card.Title>
         <Text>{item.description}</Text>
+        { item.amount ? <Text style={{textAlign: 'center', fontSize: 20}}>{item.amount} {item.CurrencyType.symbol}</Text>: null}
       </Card>
     </TouchableOpacity>
   );
@@ -78,14 +70,6 @@ const HomeScreen = ({ navigation }) => {
           keyExtractor={item => item.IDWallets}
         />
       </View>
-      <FAB
-        visible={true}
-        placement="left"
-        icon={{ name: 'add', color: 'black' }}
-        color={colors.primary}
-        size="large"
-        onPress={() => setNotif()}
-      />
       <FAB
         visible={true}
         placement="right"

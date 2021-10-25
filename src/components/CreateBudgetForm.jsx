@@ -10,11 +10,12 @@ import {createBudget} from '../services/requests';
 
 import {useAuthContext} from '../context/authContext';
 import {padding, colors} from '../styles/base';
+import Notifications from '../services/Notifications';
 
 const schema = yup.object().shape({
   title: yup.string().required('El titulo es requerido'),
   description: yup.string().notRequired(),
-  date: yup
+  notificationDate: yup
     .string()
     .matches(/^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\-]\d{4}$/, 'Fecha no valida')
     .required('La fecha es requerida'),
@@ -35,13 +36,21 @@ const CreateBudgetForm = () => {
 
   const handleCreatePress = async data => {
     try {
+      console.log(data)
       const response = await createBudget(data, user.accessToken);
-      console.log(response);
+
+      console.log(response.data);
       showMessage({
         message: "Presupuesto creado",
         description: "Tu presupuesto se creó correctamente",
         type: "success",
       });
+      await Notifications.scheduleNotification(
+        new Date(response.data.notificationDate),
+        response.data.IDBudget,
+        `Presupuesto: ${response.data.title}`,
+        "Recordatorio para añadir el presupuesto al monedero"
+      )
       reset();
       navigation.replace('BudgetInfo', { budgetId: response.data.IDBudget });
     } catch (error) {
@@ -107,13 +116,14 @@ const CreateBudgetForm = () => {
               onChangeText={onChange}
               keyboardType="number-pad"
               value={value}
-              errorMessage={errors.date?.message}
+              errorMessage={errors.notificationDate?.message}
             />
           )}
-          name="date"
+          name="notificationDate"
           defaultValue=""
         />
         <Text style={styles.infoText}>Esta fecha no puede ser modificada, elija una adecuadamente</Text>
+        <Text style={styles.infoText}>La notificación no será realizada en caso de que el usuario cierre sesión</Text>
       </View>
 
       <View style={styles.buttonContainer}>
