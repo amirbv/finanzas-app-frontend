@@ -278,7 +278,7 @@ const UpdateMovementForm = ({movementInfo, onUpdate}) => {
               />
             )}
             name="conversionRate"
-            defaultValue={movementInfo.ConversionRates.IDConversionRate}
+            defaultValue={movementInfo.ConversionRates?.IDConversionRate ? movementInfo.ConversionRates.IDConversionRate : ""}
           />
         )}
         <ErrorMessage
