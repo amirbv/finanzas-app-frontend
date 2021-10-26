@@ -93,8 +93,8 @@ const BudgetDetailsScreen = ({route, navigation}) => {
   const RenderItem = ({item}) => (
     <Card>
       <Card.Title h4>{item.title}</Card.Title>
-      <Text>{item.description}</Text>
-      <Text>Monto: {item.amount}</Text>
+      <Text>Descripción: {item.description}</Text>
+      <Text style={{fontSize: 18}}>Monto: {item.amount}</Text>
       <Button
         title="Eliminar detalle"
         type="clear"

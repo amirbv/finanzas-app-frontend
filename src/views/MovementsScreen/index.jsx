@@ -48,8 +48,8 @@ const MovementsScreen = ({ route, navigation }) => {
     >
       <Card>
         <Card.Title h4>{item.title}</Card.Title>
-        <Text>{item.description}</Text>
-        <Text>Monto: {item.amount} {walletInfo.CurrencyType.symbol}</Text>
+        <Text>Descripción: {item.description}</Text>
+        <Text style={{fontSize: 18}}>Monto: {item.amount} {walletInfo.CurrencyType.symbol}</Text>
       </Card>
     </TouchableOpacity>
   );

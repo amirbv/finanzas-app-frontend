@@ -43,8 +43,8 @@ const HomeScreen = ({ navigation }) => {
     >
       <Card>
         <Card.Title h3>{item.name}</Card.Title>
-        <Text>{item.description}</Text>
-        { item.amount ? <Text style={{textAlign: 'center', fontSize: 20}}>{item.amount} {item.CurrencyType.symbol}</Text>: null}
+        <Text>Descripción: {item.description}</Text>
+        { item.amount ? <Text style={{fontSize: 18}}>Saldo: {item.amount} {item.CurrencyType.symbol}</Text>: null}
       </Card>
     </TouchableOpacity>
   );

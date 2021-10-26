@@ -5,6 +5,7 @@ import { Text, Avatar, Button } from 'react-native-elements';
 import {showMessage} from 'react-native-flash-message';
 import UpdateBudgetForm from '../../components/UpdateBudgetForm';
 import {useAuthContext} from '../../context/authContext';
+import { parseLocalDate } from '../../services/date';
 import Notifications from '../../services/Notifications';
 import { deleteBudget, getSingleBudget } from '../../services/requests';
 import { colors } from '../../styles/base';
@@ -112,7 +113,7 @@ const BudgetInfoScreen = ({ route, navigation }) => {
               <Text h1>{budgetInfo.title}</Text>
               <Text h4>Balance: {budgetInfo.balance || 0}</Text>
               <Text>{budgetInfo.description}</Text>
-              <Text>Fecha de notificación: {new Date(budgetInfo.notificationDate).toLocaleDateString()}</Text>
+              <Text>Fecha de notificación: {parseLocalDate(budgetInfo.notificationDate)}</Text>
               <Button
                 title="Ver detalles"
                 type="clear"

@@ -6,6 +6,7 @@ import { showMessage } from "react-native-flash-message";
 import { useAuthContext } from '../../context/authContext';
 import { getUserBudgets } from "../../services/requests";
 import { colors } from "../../styles/base";
+import { parseLocalDate } from "../../services/date";
 
 const BudgetScreen = ({ navigation }) => {
   const { user } = useAuthContext();
@@ -43,9 +44,9 @@ const BudgetScreen = ({ navigation }) => {
     >
       <Card>
         <Card.Title h4>{item.title}</Card.Title>
-        <Text>{item.description}</Text>
-        <Text>{item.balance}</Text>
-        <Text>Fecha de notificación: {new Date(item.notificationDate).toLocaleDateString()}</Text>
+        <Text>Descripción: {item.description}</Text>
+        <Text style={{fontSize: 18}}>Balance: {item.balance}</Text>
+        <Text>Fecha de notificación: {parseLocalDate(item.notificationDate)}</Text>
       </Card>
     </TouchableOpacity>
   );
