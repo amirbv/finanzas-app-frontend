@@ -1,8 +1,8 @@
 import axios from 'axios';
 // import { API_URL } from "@env"
 
-// const API_URL = 'https://blooming-escarpment-45483.herokuapp.com';
-const API_URL = 'http://192.168.100.13:4000'; //recuerda que si es local tiene que ser la IP de la pc
+const API_URL = 'https://evening-journey-75773.herokuapp.com';
+// const API_URL = 'http://192.168.100.13:4000'; //recuerda que si es local tiene que ser la IP de la pc
 
 /* Login y Signup */
 export const loginRequest = async ({
